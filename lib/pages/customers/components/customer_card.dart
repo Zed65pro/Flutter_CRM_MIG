@@ -1,21 +1,16 @@
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/models/service.dart';
+import 'package:firstapp/models/customer.dart';
 import 'package:firstapp/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ServiceCard extends StatelessWidget {
-  ServiceCard({
-    super.key,
-    required this.service,
-    required this.handleDeleteServicesParent,
-    this.isFromCustomer = false,
-  });
-  final AuthController authController = Get.find();
-  final void Function(int serviceId) handleDeleteServicesParent;
-  final bool isFromCustomer;
+class CustomerCard extends StatelessWidget {
+  final Customer customer;
+  final void Function(int customerId) handleDeleteCustomerParent;
 
-  final Service service;
+  const CustomerCard(
+      {super.key,
+      required this.customer,
+      required this.handleDeleteCustomerParent});
 
   @override
   Widget build(BuildContext context) {
@@ -24,14 +19,14 @@ class ServiceCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
         title: Text(
-          service.name,
+          '${customer.firstName} ${customer.lastName}',
           style: const TextStyle(
             fontSize: 18,
             fontWeight: FontWeight.bold,
           ),
         ),
         subtitle: Text(
-          service.description,
+          'Phone number: ${customer.phoneNumber}',
           style: const TextStyle(
             fontSize: 16,
           ),
@@ -39,14 +34,14 @@ class ServiceCard extends StatelessWidget {
         trailing: Row(
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (!isFromCustomer)
-              IconButton(
-                icon: const Icon(Icons.edit,
-                    color: Color.fromARGB(255, 7, 78, 136)),
-                onPressed: () {
-                  Get.toNamed(RoutesUrls.serviceDetails, arguments: service);
-                },
-              ),
+            IconButton(
+              icon: const Icon(Icons.edit,
+                  color: Color.fromARGB(255, 7, 78, 136)),
+              onPressed: () {
+                // Add any action you want to perform when the arrow button is pressed
+                Get.toNamed(RoutesUrls.customerDetails, arguments: customer);
+              },
+            ),
             IconButton(
               icon: const Icon(Icons.delete,
                   color: Color.fromARGB(255, 158, 53, 53)),
@@ -57,19 +52,12 @@ class ServiceCard extends StatelessWidget {
                 Get.defaultDialog(
                     title: "Confirm Delete",
                     content: const Text(
-                        "Are you sure you want to delete this service?"),
+                        "Are you sure you want to delete this customer?"),
                     textConfirm: "Delete",
                     textCancel: "Cancel",
                     onConfirm: () {
-                      handleDeleteServicesParent != null
-                          ? handleDeleteServicesParent!(service.id)
-                          : null;
+                      handleDeleteCustomerParent(customer.id);
                       Get.back();
-                    },
-                    onCancel: () {
-                      // if (Get.isOverlaysOpen) {
-                      //   Get.back();
-                      // }
                     });
               },
             ),
@@ -84,9 +72,7 @@ class ServiceCard extends StatelessWidget {
         ),
         onTap: () {
           // Add any action you want to perform when the list tile is tapped
-          if (!isFromCustomer) {
-            Get.toNamed(RoutesUrls.serviceDetails, arguments: service);
-          }
+          Get.toNamed(RoutesUrls.customerDetails, arguments: customer);
         },
       ),
     );

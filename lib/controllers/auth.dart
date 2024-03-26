@@ -1,22 +1,64 @@
-// ignore_for_file: prefer_final_fields
-
+import 'dart:convert';
 import 'package:get/get.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class AuthController extends GetxController {
   final RxBool _isAuthenticated = false.obs;
   final RxString _token = "".obs;
   final RxMap<dynamic, dynamic> _user = {}.obs;
 
+  // Initialize SharedPreferences instance
+  late SharedPreferences _prefs;
+
+  // Loading state variable
+  final RxBool _loading = true.obs;
+
+  // Getter for loading state
+  RxBool get loading => _loading;
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initSharedPreferences();
+  }
+
+  Future<void> _initSharedPreferences() async {
+    _loading.value = true;
+    _prefs = await SharedPreferences.getInstance();
+    await _loadAuthData();
+    print('Initialization completed');
+
+    // await Future.delayed(const Duration(seconds: 2));
+    _loading.value = false;
+  }
+
+  Future<void> _loadAuthData() async {
+    isAuthenticated = _prefs.getBool('isAuthenticated') ?? false;
+    token = _prefs.getString('token') ?? "";
+    final String? userJson = _prefs.getString('user');
+    if (userJson != null) {
+      user = json.decode(userJson);
+    }
+  }
+
+  void _saveAuthData() {
+    _prefs.setBool('isAuthenticated', isAuthenticated);
+    _prefs.setString('token', token);
+    _prefs.setString('user', json.encode(user));
+  }
+
   void login(String authToken, Map<dynamic, dynamic> userObject) {
     isAuthenticated = true;
     token = authToken;
     user = userObject;
+    _saveAuthData();
   }
 
   void logout() {
     isAuthenticated = false;
     token = "";
     user = {};
+    _saveAuthData();
   }
 
   bool get isAuthenticated => _isAuthenticated.value;

@@ -117,7 +117,7 @@ class _ServicesPageState extends State<ServicesPage> {
       }
     } catch (e) {
       print('Error fetching services: $e');
-      throw e; // Rethrow the error to be caught by the FutureBuilder
+      rethrow; // Rethrow the error to be caught by the FutureBuilder
     }
   }
 }

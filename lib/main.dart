@@ -22,7 +22,7 @@ class MyApp extends StatelessWidget {
       debugShowCheckedModeBanner: false,
       theme: myTheme,
       initialRoute:
-          RoutesUrls.loginPage, // Set the initial route to the LoginPage
+          RoutesUrls.splashScreen, // Set the initial route to the LoginPage
       getPages: AppRoutes.routes,
       initialBinding: BindingsBuilder(() {
         Get.put(

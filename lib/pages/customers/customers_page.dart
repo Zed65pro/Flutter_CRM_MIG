@@ -1,26 +1,26 @@
 import 'dart:convert';
 
-import 'package:firstapp/api_services/service_api_services.dart';
+import 'package:firstapp/api_services/customer_api_services.dart';
 import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/models/service.dart';
+import 'package:firstapp/models/customer.dart';
+import 'package:firstapp/pages/customers/components/customer_card.dart';
 import 'package:firstapp/pages/home_page/components/home_appbar.dart';
-import 'package:firstapp/pages/services/components/service_card.dart';
 import 'package:flutter/material.dart';
-import 'package:firstapp/pages/services/components/search_bar.dart';
+import 'package:firstapp/pages/customers/components/search_bar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
-class ServicesPage extends StatefulWidget {
-  const ServicesPage({super.key});
+class CustomersPage extends StatefulWidget {
+  const CustomersPage({super.key});
 
   @override
-  _ServicesPageState createState() => _ServicesPageState();
+  _CustomerPageState createState() => _CustomerPageState();
 }
 
-class _ServicesPageState extends State<ServicesPage> {
+class _CustomerPageState extends State<CustomersPage> {
   final AuthController authController = Get.find();
-  final RxList<Service> services = <Service>[].obs;
+  final RxList<Customer> customers = <Customer>[].obs;
   final RxBool emptyQuery = false.obs;
   int currentPage = 1;
   int count = 0;
@@ -31,67 +31,62 @@ class _ServicesPageState extends State<ServicesPage> {
   @override
   void initState() {
     super.initState();
-    getServices();
+    getCustomers();
+    print('sexy');
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // appBar: AppBar(title: const Text('Services')),
+      // appBar: AppBar(title: const Text('customers')),
       appBar: HomeAppBar(),
-      body: SingleChildScrollView(
-        child: Container(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            children: [
-              const Text(
-                'Services Page',
-                style: TextStyle(
-                  fontSize: 24.0,
-                  fontWeight: FontWeight.bold,
+      body: ListView(
+        children: [
+          Container(
+            padding: const EdgeInsets.all(16.0),
+            child: Column(
+              children: [
+                const Text(
+                  'Customers Page',
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    fontWeight: FontWeight.bold,
+                  ),
                 ),
-              ),
-              const SizedBox(height: 16.0),
-              ServicesSearchBar(
-                onSearchPressed: onSearchPressed,
-                onFilterPressed: onFilterPressed,
-                searchController: query,
-              ),
-              const SizedBox(height: 16.0),
-              Obx(() {
-                if (services.isEmpty && !emptyQuery.value) {
-                  return const Center(child: CircularProgressIndicator());
-                } else if (emptyQuery.value) {
-                  return const Center(child: Text('No results found.'));
-                } else {
-                  return ListView.builder(
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    itemCount: services.length,
-                    itemBuilder: (context, index) {
-                      final service = services[index];
-                      return ServiceCard(
-                          service: service,
-                          handleDeleteServicesParent:
-                              handleDeleteServicesParent);
-                    },
-                  );
-                }
-              }),
-              _buildPaginationControls(),
-            ],
+                const SizedBox(height: 16.0),
+                ServicesSearchBar(
+                  onSearchPressed: onSearchPressed,
+                  onFilterPressed: onFilterPressed,
+                  searchController: query,
+                ),
+                const SizedBox(height: 16.0),
+                Obx(() {
+                  if (customers.isEmpty && !emptyQuery.value) {
+                    return const Center(child: CircularProgressIndicator());
+                  } else if (emptyQuery.value) {
+                    return const Center(child: Text('No results found.'));
+                  } else {
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: customers.length,
+                      itemBuilder: (context, index) {
+                        final customer = customers[index];
+                        return CustomerCard(
+                            customer: customer,
+                            handleDeleteCustomerParent:
+                                handleDeleteCustomerParent);
+                      },
+                    );
+                  }
+                }),
+                _buildPaginationControls(),
+              ],
+            ),
           ),
-        ),
+        ],
       ),
     );
-  }
-
-  void handleDeleteServicesParent(int serviceId) async {
-    bool result = await handleDeleteService(authController.token, serviceId);
-
-    if (result) {
-      services.removeWhere((service) => service.id == serviceId);
-    }
   }
 
   Widget _buildPaginationControls() {
@@ -134,21 +129,21 @@ class _ServicesPageState extends State<ServicesPage> {
   void goToPage(int page) {
     setState(() {
       currentPage = page;
-      getServices();
+      getCustomers();
     });
   }
 
   void changePage(int pageChange) {
     setState(() {
       currentPage += pageChange;
-      getServices();
+      getCustomers();
     });
   }
 
   void onSearchPressed(String search) {
     // Simulate search functionality
     print('Search pressed with query: $search');
-    getServices(search: search);
+    getCustomers(search: search);
   }
 
   void onFilterPressed() {
@@ -156,28 +151,31 @@ class _ServicesPageState extends State<ServicesPage> {
     print('Filter pressed');
   }
 
-  Future<void> getServices({String search = ''}) async {
+  void handleDeleteCustomerParent(int customerId) async {
+    bool result = await handleDeleteCustomer(authController.token, customerId);
+
+    if (result) {
+      customers.removeWhere((element) => element.id == customerId);
+    }
+  }
+
+  Future<void> getCustomers({String search = ''}) async {
     setState(() {
       isLoading = true;
     });
-
     try {
       if (search.isNotEmpty) {
         currentPage = 1;
       }
       final response = await http.get(
         Uri.parse(
-            '${dotenv.env['API_BASE_URL']}services/?search=$search&page=$currentPage&pageSize=$pageSize'),
+            '${dotenv.env['API_BASE_URL']}customers/?search=$search&page=$currentPage&pageSize=$pageSize'),
         headers: {'Authorization': 'Token ${authController.token}'},
       ).timeout(const Duration(seconds: 3), onTimeout: () {
         return http.Response('Error', 408);
       });
+
       if (response.statusCode == 200) {
-        if (search.isNotEmpty) {
-          setState(() {
-            currentPage = 1;
-          });
-        }
         final Map<String, dynamic> responseData = json.decode(response.body);
         final List<dynamic> results = responseData['results'];
         setState(() {
@@ -185,12 +183,12 @@ class _ServicesPageState extends State<ServicesPage> {
         });
         if (results.isNotEmpty) {
           emptyQuery.value = false;
-          final List<Service> serviceList =
-              results.map((json) => Service.fromJson(json)).toList();
-          services.assignAll(serviceList);
+          final List<Customer> customerList =
+              results.map((json) => Customer.fromJson(json)).toList();
+          customers.assignAll(customerList);
         } else {
           emptyQuery.value = true;
-          services.clear();
+          customers.clear();
         }
       } else if (response.statusCode == 408) {
         Get.dialog(
@@ -207,7 +205,7 @@ class _ServicesPageState extends State<ServicesPage> {
               ),
               TextButton(
                 onPressed: () {
-                  getServices();
+                  getCustomers();
                   Get.back();
                 },
                 child: const Text('Try Again'),
@@ -216,10 +214,10 @@ class _ServicesPageState extends State<ServicesPage> {
           ),
         );
       } else {
-        throw Exception('Failed to get services.');
+        throw Exception('Failed to get customers.');
       }
     } catch (e) {
-      print('Error fetching services: $e');
+      print('Error fetching customers: $e');
       rethrow; // Rethrow the error to be caught by the FutureBuilder
     } finally {
       setState(() {

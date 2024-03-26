@@ -11,13 +11,29 @@ class ServiceDetails extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(service.name),
+        title: const Text('Service Details',
+            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            const Text(
+              'Name:',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              service.name,
+              style: const TextStyle(
+                fontSize: 16,
+              ),
+            ),
+            const SizedBox(height: 8),
             const Text(
               'Description:',
               style: TextStyle(
@@ -57,10 +73,23 @@ class ServiceDetails extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              '${service.durationMonths} minutes',
+              '${service.durationMonths} Months',
               style: const TextStyle(
                 fontSize: 16,
               ),
+            ),
+            const SizedBox(height: 8),
+            const Text(
+              'Creator:',
+              style: TextStyle(
+                fontSize: 20,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+            const SizedBox(height: 8),
+            Text(
+              '@${service.createdBy.username}',
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
             ),
           ],
         ),

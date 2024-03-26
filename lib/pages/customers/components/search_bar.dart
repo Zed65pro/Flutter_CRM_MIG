@@ -34,7 +34,7 @@ class ServicesSearchBar extends StatelessWidget {
             child: TextField(
               controller: searchController,
               decoration: const InputDecoration(
-                hintText: 'Search Service by name...',
+                hintText: 'Search...',
                 border: InputBorder.none,
               ),
               onSubmitted: (value) {
