@@ -1,9 +1,9 @@
-import 'package:firstapp/api_services/user_api_services.dart';
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/pages/home_page/components/nav_bar.dart';
-import 'package:firstapp/pages/home_page/components/home_appbar.dart';
-import 'package:firstapp/pages/home_page/components/home_features.dart';
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/api_services/user_api_services.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/pages/home_page/components/nav_bar.dart';
+import 'package:crm/pages/home_page/components/home_appbar.dart';
+import 'package:crm/pages/home_page/components/home_features.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -67,8 +67,7 @@ class HomePage extends StatelessWidget {
                       },
                       style: ButtonStyle(
                         backgroundColor: MaterialStateProperty.all<Color>(
-                            const Color.fromARGB(
-                                255, 219, 50, 78)), // Set the background color
+                            const Color.fromARGB(255, 212, 173, 179)),
                       ),
                       child: const Row(
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -80,13 +79,27 @@ class HomePage extends StatelessWidget {
                           ])),
                 ],
               ),
-              const SizedBox(height: 24.0),
+              ElevatedButton(
+                  onPressed: () {
+                    Get.toNamed(RoutesUrls.jobOrder);
+                  },
+                  style: ButtonStyle(
+                    backgroundColor: MaterialStateProperty.all<Color>(
+                        const Color.fromARGB(255, 212, 173, 179)),
+                  ),
+                  child: const Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text('Job Order',
+                            style: TextStyle(
+                                fontSize: 18, fontWeight: FontWeight.bold)),
+                        Icon(Icons.work_outline)
+                      ])),
+              const SizedBox(height: 16.0),
               const Divider(),
               Row(
                 children: [
-                  const SizedBox(
-                      height:
-                          16.0), // Removed 'const' as SizedBox doesn't take 'const' parameter
+                  const SizedBox(height: 16.0),
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {

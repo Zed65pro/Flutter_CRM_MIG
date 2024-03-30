@@ -1,9 +1,9 @@
 // main.dart
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/controllers/location.dart';
-import 'package:firstapp/routes.dart';
-import 'package:firstapp/settings/routes_urls.dart';
-import 'package:firstapp/settings/theme.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/controllers/location.dart';
+import 'package:crm/routes.dart';
+import 'package:crm/settings/routes_urls.dart';
+import 'package:crm/settings/theme.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';

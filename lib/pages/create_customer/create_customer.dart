@@ -1,6 +1,6 @@
-import 'package:firstapp/api_services/customer_api_services.dart';
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/validators/customer_validator.dart';
+import 'package:crm/api_services/customer_api_services.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/validators/customer_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

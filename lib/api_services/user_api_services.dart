@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';

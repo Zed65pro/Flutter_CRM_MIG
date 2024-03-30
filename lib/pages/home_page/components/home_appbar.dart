@@ -1,6 +1,6 @@
-import 'package:firstapp/api_services/user_api_services.dart';
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/api_services/user_api_services.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -11,13 +11,12 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
   final AuthController authController = Get.find();
 
   @override
-  Size get preferredSize => const Size.fromHeight(120.0); // Increased height
+  Size get preferredSize => const Size.fromHeight(80.0); // Increased height
 
   @override
   Widget build(BuildContext context) {
-    // print(Get.routing.current);
     return ClipPath(
-      clipper: WaveClipper(),
+      // clipper: WaveClipper(),
       child: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(
@@ -52,50 +51,6 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
                     color: Colors.white,
                   ),
                 ),
-                // PopupMenuButton<int>(
-                //   onSelected: onMenuSelected,
-                //   icon: const Icon(
-                //     Icons.menu,
-                //     color: Colors.white,
-                //   ),
-                //   itemBuilder: (BuildContext context) => <PopupMenuEntry<int>>[
-                //     const PopupMenuItem<int>(
-                //       value: 0,
-                //       child: Text(
-                //         'Customers',
-                //         style: TextStyle(color: Colors.black87),
-                //       ),
-                //     ),
-                //     const PopupMenuItem<int>(
-                //       value: 1,
-                //       child: Text(
-                //         'Services',
-                //         style: TextStyle(color: Colors.black87),
-                //       ),
-                //     ),
-                //     const PopupMenuItem<int>(
-                //       value: 2,
-                //       child: Text(
-                //         'Create Customer',
-                //         style: TextStyle(color: Colors.black87),
-                //       ),
-                //     ),
-                //     const PopupMenuItem<int>(
-                //       value: 3,
-                //       child: Text(
-                //         'Create Service',
-                //         style: TextStyle(color: Colors.black87),
-                //       ),
-                //     ),
-                //     const PopupMenuItem<int>(
-                //       value: 4,
-                //       child: Text(
-                //         'Logout',
-                //         style: TextStyle(color: Colors.black87),
-                //       ),
-                //     ),
-                //   ],
-                // ),
               ],
             ),
             iconTheme: const IconThemeData(color: Colors.white)),

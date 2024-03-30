@@ -1,6 +1,6 @@
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/models/service.dart';
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/models/service.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

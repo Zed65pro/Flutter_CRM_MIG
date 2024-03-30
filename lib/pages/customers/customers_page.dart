@@ -1,14 +1,14 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:firstapp/api_services/customer_api_services.dart';
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/models/customer.dart';
-import 'package:firstapp/pages/customers/components/customer_card.dart';
-import 'package:firstapp/pages/home_page/components/home_appbar.dart';
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/api_services/customer_api_services.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/models/customer.dart';
+import 'package:crm/pages/customers/components/customer_card.dart';
+import 'package:crm/pages/home_page/components/home_appbar.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
-import 'package:firstapp/pages/customers/components/search_bar.dart';
+import 'package:crm/pages/customers/components/search_bar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;

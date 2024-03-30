@@ -1,4 +1,4 @@
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:scaled_list/scaled_list.dart';

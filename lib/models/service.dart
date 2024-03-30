@@ -1,4 +1,4 @@
-import 'package:firstapp/models/user.dart';
+import 'package:crm/models/user.dart';
 
 class Service {
   final int id;

@@ -5,8 +5,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
-import 'package:firstapp/controllers/location.dart';
-import 'package:firstapp/pages/map/misc/tile_providers.dart';
+import 'package:crm/controllers/location.dart';
+import 'package:crm/pages/map/misc/tile_providers.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DirectionMap extends StatefulWidget {

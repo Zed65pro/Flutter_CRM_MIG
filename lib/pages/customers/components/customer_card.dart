@@ -1,5 +1,5 @@
-import 'package:firstapp/models/customer.dart';
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/models/customer.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

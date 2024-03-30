@@ -1,4 +1,4 @@
-import 'package:firstapp/models/service.dart';
+import 'package:crm/models/service.dart';
 import 'package:flutter/material.dart';
 
 class ServiceCardDetails extends StatelessWidget {

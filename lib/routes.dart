@@ -1,20 +1,21 @@
 // routes.dart
-import 'package:firstapp/pages/camera/job_camera.dart';
-import 'package:firstapp/pages/create_customer/create_customer.dart';
-import 'package:firstapp/pages/create_service/create_service.dart';
-import 'package:firstapp/pages/customer_details/customer_details.dart';
-import 'package:firstapp/pages/customers/customers_page.dart';
-import 'package:firstapp/pages/edit_customer/edit_customer.dart';
-import 'package:firstapp/pages/edit_service/edit_service.dart';
-import 'package:firstapp/pages/home_page/home_page.dart';
-import 'package:firstapp/middlewares/auth.dart';
-import 'package:firstapp/pages/login_page/login_page.dart';
-import 'package:firstapp/pages/map/direction_map.dart';
-import 'package:firstapp/pages/service_details/service_details.dart';
-import 'package:firstapp/pages/services/services_page.dart';
-import 'package:firstapp/splash_screen.dart';
+import 'package:crm/pages/job_orders/components/job_camera.dart';
+import 'package:crm/pages/create_customer/create_customer.dart';
+import 'package:crm/pages/create_service/create_service.dart';
+import 'package:crm/pages/customer_details/customer_details.dart';
+import 'package:crm/pages/customers/customers_page.dart';
+import 'package:crm/pages/edit_customer/edit_customer.dart';
+import 'package:crm/pages/edit_service/edit_service.dart';
+import 'package:crm/pages/home_page/home_page.dart';
+import 'package:crm/middlewares/auth.dart';
+import 'package:crm/pages/job_orders/job_orders_page.dart';
+import 'package:crm/pages/login_page/login_page.dart';
+import 'package:crm/pages/map/direction_map.dart';
+import 'package:crm/pages/service_details/service_details.dart';
+import 'package:crm/pages/services/services_page.dart';
+import 'package:crm/splash_screen.dart';
 import 'package:get/get.dart';
-import 'package:firstapp/settings/routes_urls.dart';
+import 'package:crm/settings/routes_urls.dart';
 
 class AppRoutes {
   static final List<GetPage> routes = [
@@ -92,6 +93,12 @@ class AppRoutes {
       //Customer create page
       name: RoutesUrls.jobCamera,
       page: () => const JobCamera(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      //Customer create page
+      name: RoutesUrls.jobOrder,
+      page: () => JobOrder(),
       middlewares: [AuthMiddleware()],
     ),
   ];

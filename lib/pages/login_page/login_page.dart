@@ -1,5 +1,5 @@
-import 'package:firstapp/controllers/auth.dart';
-import 'package:firstapp/pages/login_page/components/login_form.dart';
+import 'package:crm/controllers/auth.dart';
+import 'package:crm/pages/login_page/components/login_form.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

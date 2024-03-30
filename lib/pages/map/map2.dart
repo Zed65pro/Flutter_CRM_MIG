@@ -1,5 +1,5 @@
-import 'package:firstapp/controllers/location.dart';
-import 'package:firstapp/pages/map/misc/tile_providers.dart';
+import 'package:crm/controllers/location.dart';
+import 'package:crm/pages/map/misc/tile_providers.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';

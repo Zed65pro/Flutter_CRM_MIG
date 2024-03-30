@@ -1,5 +1,5 @@
-import 'package:firstapp/models/service.dart';
-import 'package:firstapp/models/user.dart';
+import 'package:crm/models/service.dart';
+import 'package:crm/models/user.dart';
 
 class Customer {
   final int id;

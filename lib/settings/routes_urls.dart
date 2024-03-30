@@ -12,7 +12,8 @@ class RoutesUrls {
     'update_service': '/update/service',
     'splash_screen': '/splash_screen',
     'display_map': '/display_map',
-    'job_camera': '/job_camera'
+    'job_camera': '/job_camera',
+    'job_order_page': '/job_order_page',
   };
 
   static String get loginPage => _routes['login_page']!;
@@ -28,4 +29,5 @@ class RoutesUrls {
   static String get updateService => _routes['update_service']!;
   static String get displayMap => _routes['display_map']!;
   static String get jobCamera => _routes['job_camera']!;
+  static String get jobOrder => _routes['job_order_page']!;
 }
