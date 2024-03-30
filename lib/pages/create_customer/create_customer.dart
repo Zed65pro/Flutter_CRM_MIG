@@ -126,7 +126,7 @@ class _CreateCustomerState extends State<CreateCustomer> {
         _isLoading = true;
       });
 
-      final success = await createCustomer(
+      final success = await handleCreateCustomer(
         firstName: _firstNameController.text,
         lastName: _lastNameController.text,
         address: _addressController.text,

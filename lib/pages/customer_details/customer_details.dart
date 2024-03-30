@@ -35,9 +35,14 @@ class _CustomerDetailsState extends State<CustomerDetails> {
   }
 
   @override
-  Widget build(BuildContext context) {
+  void didChangeDependencies() {
+    super.didChangeDependencies();
     customer = ModalRoute.of(context)!.settings.arguments as Customer;
     filteredServices = customer.services.obs;
+  }
+
+  @override
+  Widget build(BuildContext context) {
     void onSearchPressed(String query) {
       // Create a new list to store filtered services
       List<Service> filteredList = [];
@@ -58,7 +63,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
 
     return Scaffold(
       // Set a light background color
-      resizeToAvoidBottomInset: true,
+      // resizeToAvoidBottomInset: true,
       appBar: HomeAppBar(title: 'Customer Details'),
       body: SingleChildScrollView(
         child: Padding(
@@ -75,7 +80,7 @@ class _CustomerDetailsState extends State<CustomerDetails> {
               //   },
               //   child: const Text('Press Me'),
               // ),
-              CustomerCard(customer: customer),
+              CustomerCardDetails(customer: customer),
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 16),
@@ -96,30 +101,42 @@ class _CustomerDetailsState extends State<CustomerDetails> {
                             color: Color.fromARGB(255, 54, 143, 215)),
                         onPressed: () {
                           // Add your edit logic here
+                          Get.toNamed(RoutesUrls.updateCustomer,
+                              arguments: customer);
                         },
                       ),
                       IconButton(
                         icon: const Icon(Icons.delete,
                             color: Color.fromARGB(255, 186, 36, 36)),
                         onPressed: () async {
-                          final res = await handleDeleteCustomer(
-                              authController.token, customer.id);
-                          if (res) {
-                            Get.offNamedUntil(
-                                RoutesUrls.customersPage,
-                                (route) =>
-                                    route.settings.name == RoutesUrls.homePage);
+                          Get.defaultDialog(
+                            title: 'Delete customer',
+                            content: const Padding(
+                              padding: EdgeInsets.all(8.0),
+                              child: Text(
+                                'Are you sure you want to delete this customer?',
+                                textAlign: TextAlign.center,
+                              ),
+                            ),
+                            textConfirm: 'OK',
+                            onConfirm: () async {
+                              // Add logic to add a service to a customer
+                              bool result = await handleDeleteCustomer(
+                                  authController.token, customer.id);
 
-                            Get.snackbar(
-                              'Success',
-                              'Customer successfully deleted!',
-                              backgroundColor:
-                                  const Color.fromARGB(255, 71, 120, 73),
-                              colorText: Colors.white,
-                              snackPosition: SnackPosition.BOTTOM,
-                              duration: const Duration(seconds: 2),
-                            );
-                          }
+                              if (result) {
+                                Get.offNamedUntil(
+                                    RoutesUrls.customersPage,
+                                    (route) =>
+                                        route.settings.name ==
+                                        RoutesUrls.homePage);
+                              } else {}
+                            },
+                            textCancel: 'Cancel', // Add a cancel button
+                            onCancel: () {
+                              // Get.back(); // Close the dialog without adding the service
+                            },
+                          );
                         },
                       ),
                     ],
@@ -129,11 +146,13 @@ class _CustomerDetailsState extends State<CustomerDetails> {
               const SizedBox(height: 16),
               const Divider(),
               const SizedBox(height: 16),
-              AddService(
-                  services: services,
-                  customer: customer,
-                  authController: authController,
-                  filteredServices: filteredServices),
+              AddServiceToCustomer(
+                services: services,
+                customer: customer,
+                authController: authController,
+                filteredServices: filteredServices,
+                handleAddService: handleAddService,
+              ),
               Obx(() {
                 if (filteredServices.isNotEmpty) {
                   return customerServicesDisplay(onSearchPressed);
@@ -244,6 +263,15 @@ class _CustomerDetailsState extends State<CustomerDetails> {
     if (res) {
       customer.services.removeWhere((element) => element.id == serviceId);
       filteredServices.removeWhere((element) => serviceId == element.id);
+    }
+  }
+
+  void handleAddService(Service selectedService) async {
+    final res = await addServiceToCustomer(
+        authController.token, customer.id, selectedService.id);
+    if (res) {
+      customer.services.add(selectedService);
+      filteredServices.add(selectedService);
     }
   }
 }

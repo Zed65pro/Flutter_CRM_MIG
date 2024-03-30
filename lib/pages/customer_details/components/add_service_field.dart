@@ -1,4 +1,3 @@
-import 'package:firstapp/api_services/customer_api_services.dart';
 import 'package:firstapp/controllers/auth.dart';
 import 'package:firstapp/models/customer.dart';
 import 'package:flutter/material.dart';
@@ -7,25 +6,27 @@ import 'package:searchfield/searchfield.dart';
 
 import '../../../models/service.dart';
 
-class AddService extends StatelessWidget {
-  const AddService({
+class AddServiceToCustomer extends StatelessWidget {
+  const AddServiceToCustomer({
     super.key,
     required this.services,
     required this.customer,
     required this.authController,
     required this.filteredServices,
+    required this.handleAddService,
   });
 
   final RxList<Service> services;
   final Customer customer;
   final AuthController authController;
   final RxList<Service> filteredServices;
+  final void Function(Service serviceId) handleAddService;
 
   @override
   Widget build(BuildContext context) {
     return ListView(
       shrinkWrap: true,
-      physics: const NeverScrollableScrollPhysics(),
+      // physics: const NeverScrollableScrollPhysics(),
       children: [
         const Center(
           child: Text('Add a service',
@@ -38,24 +39,24 @@ class AddService extends StatelessWidget {
               autoCorrect: true,
               autofocus: false,
               hint: 'Select a service to add',
-              searchStyle: TextStyle(
-                fontSize: 18,
-                color: Colors.black.withOpacity(0.8),
-              ),
-              searchInputDecoration: InputDecoration(
-                focusedBorder: OutlineInputBorder(
-                  borderSide: BorderSide(
-                    color: Colors.black.withOpacity(0.8),
-                  ),
-                ),
-                border: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.red),
-                ),
-              ),
-              maxSuggestionsInViewPort: 5,
-              suggestionDirection: SuggestionDirection.up,
+              // searchStyle: TextStyle(
+              //   fontSize: 18,
+              //   color: Colors.black.withOpacity(0.8),
+              // ),
+              // searchInputDecoration: InputDecoration(
+              //   focusedBorder: OutlineInputBorder(
+              //     borderSide: BorderSide(
+              //       color: Colors.black.withOpacity(0.8),
+              //     ),
+              //   ),
+              //   border: const OutlineInputBorder(
+              //     borderSide: BorderSide(color: Colors.red),
+              //   ),
+              // ),
+              maxSuggestionsInViewPort: 100,
               suggestionAction: SuggestionAction.unfocus,
               suggestionState: Suggestion.expand,
+              suggestionDirection: SuggestionDirection.up,
               marginColor: Colors.purple,
               onSuggestionTap: (SearchFieldListItem<Service> field) {
                 if (field.item != null) {
@@ -85,14 +86,7 @@ class AddService extends StatelessWidget {
                       onConfirm: () async {
                         // Add logic to add a service to a customer
                         Get.back();
-                        final res = await addServiceToCustomer(
-                            authController.token,
-                            customer.id,
-                            selectedService.id);
-                        if (res) {
-                          customer.services.add(selectedService);
-                          filteredServices.add(selectedService);
-                        }
+                        handleAddService(selectedService);
                       },
                       textCancel: 'Cancel', // Add a cancel button
                       onCancel: () {
@@ -107,19 +101,32 @@ class AddService extends StatelessWidget {
                     (e) => SearchFieldListItem<Service>(
                       e.name,
                       item: e,
-                      // Use child to show Custom Widgets in the suggestions
-                      // defaults to Text widget
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
+                      // Custom suggestion design
+                      child: Container(
+                        padding: const EdgeInsets.all(15.0),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(8.0),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.grey.withOpacity(0.3),
+                              spreadRadius: 1,
+                              blurRadius: 5,
+                              offset: const Offset(0, 3),
+                            ),
+                          ],
+                        ),
                         child: Row(
                           children: [
-                            // CircleAvatar(
-                            //   backgroundImage: NetworkImage(e.flag),
-                            // ),
-                            // const SizedBox(
-                            //   width: 10,
-                            // ),
-                            Text(e.name),
+                            const SizedBox(width: 10),
+                            Text(
+                              e.name,
+                              style: const TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                                color: Colors.black,
+                              ),
+                            ),
                           ],
                         ),
                       ),

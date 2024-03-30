@@ -1,8 +1,8 @@
 import 'package:firstapp/models/customer.dart';
 import 'package:flutter/material.dart';
 
-class CustomerCard extends StatelessWidget {
-  const CustomerCard({
+class CustomerCardDetails extends StatelessWidget {
+  const CustomerCardDetails({
     super.key,
     required this.customer,
   });

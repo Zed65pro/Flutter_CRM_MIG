@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:firstapp/api_services/customer_api_services.dart';
 import 'package:firstapp/controllers/auth.dart';
 import 'package:firstapp/models/customer.dart';
 import 'package:firstapp/pages/customers/components/customer_card.dart';
 import 'package:firstapp/pages/home_page/components/home_appbar.dart';
+import 'package:firstapp/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:firstapp/pages/customers/components/search_bar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -32,7 +34,6 @@ class _CustomerPageState extends State<CustomersPage> {
   void initState() {
     super.initState();
     getCustomers();
-    print('sexy');
   }
 
   @override
@@ -40,51 +41,54 @@ class _CustomerPageState extends State<CustomersPage> {
     return Scaffold(
       // appBar: AppBar(title: const Text('customers')),
       appBar: HomeAppBar(),
-      body: ListView(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(16.0),
-            child: Column(
-              children: [
-                const Text(
-                  'Customers Page',
-                  style: TextStyle(
-                    fontSize: 24.0,
-                    fontWeight: FontWeight.bold,
+      body: RefreshIndicator(
+        onRefresh: getCustomers,
+        child: ListView(
+          children: [
+            Container(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  const Text(
+                    'Customers Page',
+                    style: TextStyle(
+                      fontSize: 24.0,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                ),
-                const SizedBox(height: 16.0),
-                ServicesSearchBar(
-                  onSearchPressed: onSearchPressed,
-                  onFilterPressed: onFilterPressed,
-                  searchController: query,
-                ),
-                const SizedBox(height: 16.0),
-                Obx(() {
-                  if (customers.isEmpty && !emptyQuery.value) {
-                    return const Center(child: CircularProgressIndicator());
-                  } else if (emptyQuery.value) {
-                    return const Center(child: Text('No results found.'));
-                  } else {
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: customers.length,
-                      itemBuilder: (context, index) {
-                        final customer = customers[index];
-                        return CustomerCard(
-                            customer: customer,
-                            handleDeleteCustomerParent:
-                                handleDeleteCustomerParent);
-                      },
-                    );
-                  }
-                }),
-                _buildPaginationControls(),
-              ],
+                  const SizedBox(height: 16.0),
+                  ServicesSearchBar(
+                    onSearchPressed: onSearchPressed,
+                    onFilterPressed: onFilterPressed,
+                    searchController: query,
+                  ),
+                  const SizedBox(height: 16.0),
+                  Obx(() {
+                    if (customers.isEmpty && !emptyQuery.value) {
+                      return const Center(child: CircularProgressIndicator());
+                    } else if (emptyQuery.value) {
+                      return const Center(child: Text('No results found.'));
+                    } else {
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: customers.length,
+                        itemBuilder: (context, index) {
+                          final customer = customers[index];
+                          return CustomerCard(
+                              customer: customer,
+                              handleDeleteCustomerParent:
+                                  handleDeleteCustomerParent);
+                        },
+                      );
+                    }
+                  }),
+                  _buildPaginationControls(),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
@@ -216,6 +220,22 @@ class _CustomerPageState extends State<CustomersPage> {
       } else {
         throw Exception('Failed to get customers.');
       }
+    } on SocketException {
+      // Handle SocketException: No internet connection or server not reachable
+      Get.defaultDialog(
+        title: 'Error',
+        content: const Padding(
+          padding: EdgeInsets.all(8.0),
+          child: Text(
+            'No internet connection or server is unreachable',
+            textAlign: TextAlign.center,
+          ),
+        ),
+        textConfirm: 'OK',
+        onConfirm: () {
+          Get.offAllNamed(RoutesUrls.homePage);
+        }, // Close the dialog
+      );
     } catch (e) {
       print('Error fetching customers: $e');
       rethrow; // Rethrow the error to be caught by the FutureBuilder

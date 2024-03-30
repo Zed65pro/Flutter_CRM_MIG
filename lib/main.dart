@@ -1,5 +1,6 @@
 // main.dart
 import 'package:firstapp/controllers/auth.dart';
+import 'package:firstapp/controllers/location.dart';
 import 'package:firstapp/routes.dart';
 import 'package:firstapp/settings/routes_urls.dart';
 import 'package:firstapp/settings/theme.dart';
@@ -28,6 +29,8 @@ class MyApp extends StatelessWidget {
         Get.put(
           AuthController(),
         );
+        Get.put(LocationController());
+        // Get.lazyPut(() => LocationController());
       }),
     );
   }

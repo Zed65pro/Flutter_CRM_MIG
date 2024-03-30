@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:firstapp/controllers/auth.dart';
 import 'package:firstapp/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:http/http.dart' as http;
 
 void handleLogout(AuthController authController) async {
   try {
+    // authController.logout();
     final response = await http.post(
         Uri.parse('${dotenv.env['API_BASE_URL']}token/logout/'),
         headers: {'Authorization': 'Token ${authController.token}'});
@@ -20,6 +22,9 @@ void handleLogout(AuthController authController) async {
       //Failed
       throw Exception('Failed to logout: ${response.statusCode}');
     }
+  } on SocketException {
+    // Handle SocketException: No internet connection or server not reachable
+    _showFailureDialog('No internet connection or server not reachable.');
   } catch (e) {
     print("Failed to logout!");
     print(e);
@@ -50,6 +55,9 @@ void handleLogin(
       // Handle HTTP errors
       throw Exception('Failed to login: ${response.statusCode}');
     }
+  } on SocketException {
+    // Handle SocketException: No internet connection or server not reachable
+    _showFailureDialog('No internet connection or server not reachable.');
   } catch (e) {
     print("Error occurred:");
     _showFailureDialog('Invalid username or password. Please try again.');
@@ -81,6 +89,9 @@ void getUserFromToken(String token, AuthController authController) async {
     } else {
       throw Exception('Failed to get user: ${response.statusCode}');
     }
+  } on SocketException {
+    // Handle SocketException: No internet connection or server not reachable
+    _showFailureDialog('No internet connection or server not reachable.');
   } catch (e) {
     print('error getting user');
     _showFailureDialog('Invalid username or password. Please try again.');
@@ -89,7 +100,7 @@ void getUserFromToken(String token, AuthController authController) async {
 
 void _showFailureDialog(String msg) {
   Get.defaultDialog(
-    title: 'Login Failed',
+    title: 'Error',
     content: Padding(
       padding: const EdgeInsets.all(8.0),
       child: Text(

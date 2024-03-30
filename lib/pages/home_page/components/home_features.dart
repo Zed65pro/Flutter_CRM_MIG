@@ -13,13 +13,13 @@ class HomeFeatures extends StatelessWidget {
   final AuthController authController;
 
   // Define a centralized variable for the button color
-  final Color buttonColor = const Color.fromARGB(197, 158, 41, 178);
+  final Color buttonColor = Color.fromARGB(197, 92, 101, 224);
 
   // Define a list of button data
   final List<Map<String, dynamic>> buttons = [
     {'text': 'Customers', 'route': RoutesUrls.customersPage},
     {'text': 'Services', 'route': RoutesUrls.servicesPage},
-    {'text': 'Logout', 'route': null}, // For logout, handle separately
+    // {'text': 'Logout', 'route': null}, // For logout, handle separately
     {'text': 'Create customer', 'route': RoutesUrls.createCustomer},
     {'text': 'Create Service', 'route': RoutesUrls.createService},
   ];
@@ -39,12 +39,7 @@ class HomeFeatures extends StatelessWidget {
         const SizedBox(height: 16.0),
         // Dynamically generate buttons from the list
         for (final button in buttons)
-          if (button['text'] != 'Logout') // Exclude Logout button temporarily
-            _buildButton(button['text'], button['route']),
-        // const SizedBox(height: 16.0),
-        // Logout button handled separately
-        _buildButton('Logout', null),
-        // const SizedBox(height: 16.0),
+          _buildButton(button['text'], button['route']),
       ],
     );
   }
@@ -53,6 +48,7 @@ class HomeFeatures extends StatelessWidget {
   Widget _buildButton(String buttonText, String? route) {
     return Row(
       children: [
+        const SizedBox(height: 16.0),
         Expanded(
           child: ElevatedButton(
             onPressed: () {

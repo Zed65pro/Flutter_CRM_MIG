@@ -15,6 +15,7 @@ class HomeAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    // print(Get.routing.current);
     return ClipPath(
       clipper: WaveClipper(),
       child: Container(

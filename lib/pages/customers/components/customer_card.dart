@@ -39,7 +39,7 @@ class CustomerCard extends StatelessWidget {
                   color: Color.fromARGB(255, 7, 78, 136)),
               onPressed: () {
                 // Add any action you want to perform when the arrow button is pressed
-                Get.toNamed(RoutesUrls.customerDetails, arguments: customer);
+                Get.toNamed(RoutesUrls.customerDetails, arguments: customer.id);
               },
             ),
             IconButton(

@@ -1,27 +1,43 @@
 import 'package:firstapp/api_services/service_api_services.dart';
 import 'package:firstapp/controllers/auth.dart';
+import 'package:firstapp/settings/routes_urls.dart';
 import 'package:firstapp/validators/services_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 
-class CreateService extends StatefulWidget {
-  const CreateService({super.key});
+import '../../models/service.dart';
+
+class EditService extends StatefulWidget {
+  const EditService({super.key});
 
   @override
-  State<CreateService> createState() => _CreateServiceState();
+  State<EditService> createState() => _CreateServiceState();
 }
 
-class _CreateServiceState extends State<CreateService> {
+class _CreateServiceState extends State<EditService> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   final AuthController authController = Get.find();
-  final TextEditingController _nameController = TextEditingController();
-  final TextEditingController _descriptionController = TextEditingController();
-  final TextEditingController _priceController = TextEditingController();
-  final TextEditingController _durationMonthsController =
-      TextEditingController();
+
+  late final Service service;
+  late final TextEditingController _priceController;
+  late final TextEditingController _descriptionController;
+  late final TextEditingController _nameController;
+  late final TextEditingController _durationMonthsController;
 
   bool _isLoading = false;
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+
+    // Initialize Service object and associated controllers
+    service = ModalRoute.of(context)!.settings.arguments as Service;
+    _nameController = TextEditingController(text: service.name);
+    _descriptionController = TextEditingController(text: service.description);
+    _priceController = TextEditingController(text: service.price.toString());
+    _durationMonthsController =
+        TextEditingController(text: service.durationMonths.toString());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -115,22 +131,24 @@ class _CreateServiceState extends State<CreateService> {
       });
 
       try {
-        final success = await handleCreateService(
-          name: _nameController.text,
-          description: _descriptionController.text,
-          price: _priceController.text,
-          durationMonths: _durationMonthsController.text,
-          token: authController.token,
-        );
+        final success = await handleUpdateService(
+            name: _nameController.text,
+            description: _descriptionController.text,
+            price: _priceController.text,
+            durationMonths: _durationMonthsController.text,
+            token: authController.token,
+            serviceId: service.id);
         setState(() {
           _isLoading = false;
         });
 
-        if (success) {
-          Get.back();
+        if (success != false) {
+          Get.offNamedUntil(RoutesUrls.serviceDetails,
+              (route) => route.settings.name == RoutesUrls.servicesPage,
+              arguments: Service.fromJson(success));
           Get.snackbar(
             'Success',
-            'Service successfully created!',
+            'Service successfully updated!',
             backgroundColor: const Color.fromARGB(255, 71, 120, 73),
             colorText: Colors.white,
             snackPosition: SnackPosition.BOTTOM,

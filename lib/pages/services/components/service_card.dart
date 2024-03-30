@@ -61,9 +61,7 @@ class ServiceCard extends StatelessWidget {
                     textConfirm: "Delete",
                     textCancel: "Cancel",
                     onConfirm: () {
-                      handleDeleteServicesParent != null
-                          ? handleDeleteServicesParent!(service.id)
-                          : null;
+                      handleDeleteServicesParent(service.id);
                       Get.back();
                     },
                     onCancel: () {

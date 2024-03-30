@@ -14,19 +14,19 @@ class LoginPage extends StatelessWidget {
         "Login Screen: Authenticated Status ${authController.isAuthenticated}");
 
     return Scaffold(
-        resizeToAvoidBottomInset: false,
+        // resizeToAvoidBottomInset: false,
         body: Container(
-          decoration: const BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-              colors: [
-                Color.fromARGB(255, 41, 121, 201),
-                Color.fromARGB(198, 195, 58, 219),
-              ],
-            ),
-          ),
-          child: LoginForm(authController: authController),
-        ));
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color.fromARGB(255, 41, 121, 201),
+            Color.fromARGB(198, 195, 58, 219),
+          ],
+        ),
+      ),
+      child: LoginForm(authController: authController),
+    ));
   }
 }

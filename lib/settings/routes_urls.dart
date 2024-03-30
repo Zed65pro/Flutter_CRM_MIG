@@ -7,8 +7,11 @@ class RoutesUrls {
     'customers_page': '/customers',
     'customers_details': '/customers/details',
     'create_customer': '/create/customer',
+    'update_customer': '/update/customer',
     'create_service': '/create/service',
+    'update_service': '/update/service',
     'splash_screen': '/splash_screen',
+    'display_map': '/display_map'
   };
 
   static String get loginPage => _routes['login_page']!;
@@ -20,4 +23,7 @@ class RoutesUrls {
   static String get createCustomer => _routes['create_customer']!;
   static String get createService => _routes['create_service']!;
   static String get splashScreen => _routes['splash_screen']!;
+  static String get updateCustomer => _routes['update_customer']!;
+  static String get updateService => _routes['update_service']!;
+  static String get displayMap => _routes['display_map']!;
 }

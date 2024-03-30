@@ -1,96 +1,104 @@
+import 'package:firstapp/api_services/service_api_services.dart';
+import 'package:firstapp/controllers/auth.dart';
 import 'package:firstapp/models/service.dart';
+import 'package:firstapp/pages/home_page/components/home_appbar.dart';
+import 'package:firstapp/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 
-class ServiceDetails extends StatelessWidget {
+import 'components/service_card_details.dart';
+
+class ServiceDetails extends StatefulWidget {
   const ServiceDetails({super.key});
+
+  @override
+  State<ServiceDetails> createState() => _ServiceDetailsState();
+}
+
+class _ServiceDetailsState extends State<ServiceDetails> {
+  final AuthController authController = Get.find();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+  }
 
   @override
   Widget build(BuildContext context) {
     final Service service =
         ModalRoute.of(context)!.settings.arguments as Service;
-
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Service Details',
-            style: TextStyle(fontSize: 25, fontWeight: FontWeight.bold)),
-      ),
-      body: Padding(
+      appBar: HomeAppBar(title: 'Service Details'),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Text(
-              'Name:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              service.name,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Description:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              service.description,
-              style: const TextStyle(
-                fontSize: 16,
-              ),
+            ServiceCardDetails(service: service),
+            const SizedBox(height: 16),
+            const Divider(),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                const Text(
+                  'Modifications',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                Row(
+                  children: [
+                    IconButton(
+                      icon: const Icon(Icons.edit,
+                          color: Color.fromARGB(255, 54, 143, 215)),
+                      onPressed: () {
+                        // Add your edit logic here
+                        Get.toNamed(RoutesUrls.updateService,
+                            arguments: service);
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.delete,
+                          color: Color.fromARGB(255, 186, 36, 36)),
+                      onPressed: () async {
+                        Get.defaultDialog(
+                          title: 'Delete Service from customer',
+                          content: const Padding(
+                            padding: EdgeInsets.all(8.0),
+                            child: Text(
+                              'Are you sure you want to remove this service from the customer?',
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                          textConfirm: 'OK',
+                          onConfirm: () async {
+                            // Add logic to add a service to a customer
+                            bool result = await handleDeleteService(
+                                authController.token, service.id);
+
+                            if (result) {
+                              Get.offNamedUntil(
+                                  RoutesUrls.servicesPage,
+                                  (route) =>
+                                      route.settings.name ==
+                                      RoutesUrls.homePage);
+                            } else {}
+                          },
+                          textCancel: 'Cancel', // Add a cancel button
+                          onCancel: () {
+                            // Get.back(); // Close the dialog without adding the service
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              ],
             ),
             const SizedBox(height: 16),
-            const Text(
-              'Price:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '\$${service.price}',
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
+            const Divider(),
             const SizedBox(height: 16),
-            const Text(
-              'Duration:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '${service.durationMonths} Months',
-              style: const TextStyle(
-                fontSize: 16,
-              ),
-            ),
-            const SizedBox(height: 8),
-            const Text(
-              'Creator:',
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 8),
-            Text(
-              '@${service.createdBy.username}',
-              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
-            ),
           ],
         ),
       ),
