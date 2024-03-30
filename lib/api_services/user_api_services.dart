@@ -1,75 +1,81 @@
+// ignore_for_file: avoid_print, constant_identifier_names
+
 import 'dart:convert';
 import 'dart:io';
+import 'package:crm/components/dialogs/dialogs.dart';
 import 'package:crm/controllers/auth.dart';
 import 'package:crm/settings/routes_urls.dart';
-import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 
+const int DEFAULT_TIMEOUT_SECONDS = 5;
+
 void handleLogout(AuthController authController) async {
   try {
-    // authController.logout();
-    final response = await http.post(
-        Uri.parse('${dotenv.env['API_BASE_URL']}token/logout/'),
-        headers: {'Authorization': 'Token ${authController.token}'});
+    Uri url = Uri.parse('${dotenv.env['API_BASE_URL']}token/logout/');
+    String authToken = 'Token ${authController.token}';
+    final response = await http
+        .post(url, headers: {'Authorization': authToken}).timeout(
+            const Duration(seconds: DEFAULT_TIMEOUT_SECONDS), onTimeout: () {
+      return http.Response('Error', 408);
+    });
+
     if (response.statusCode == 204) {
-      //Success
       authController.logout();
       Get.offAllNamed(RoutesUrls.loginPage);
-      print("Logged out!");
+      showSuccessSnackbar('Successfuly logged out');
+    } else if (response.statusCode == 408) {
+      showFailureDialog('Request timed out. Please try again.');
     } else {
-      //Failed
-      throw Exception('Failed to logout: ${response.statusCode}');
+      showFailureDialog('Failed to logout: ${response.statusCode}');
     }
   } on SocketException {
-    // Handle SocketException: No internet connection or server not reachable
-    _showFailureDialog('No internet connection or server not reachable.');
+    showFailureDialog('No internet connection or server not reachable.');
   } catch (e) {
-    print("Failed to logout!");
-    print(e);
+    print("Failed to logout! $e");
+    showFailureDialog('Failed to logiut');
   }
 }
 
 void handleLogin(
     AuthController authController, String? username, String? password) async {
-  // Replace with your own logic for validating the username and password
-  print("Logging in...");
   try {
-    final response = await http
-        .post(Uri.parse('${dotenv.env['API_BASE_URL']}token/login/'), body: {
+    Uri url = Uri.parse('${dotenv.env['API_BASE_URL']}token/login/');
+    Object body = {
       'username': username,
       'password': password,
-    }).timeout(const Duration(seconds: 3), onTimeout: () {
+    };
+
+    final response = await http.post(url, body: body).timeout(
+        const Duration(seconds: DEFAULT_TIMEOUT_SECONDS), onTimeout: () {
       return http.Response('Error', 408);
     });
-    //SUCCESS
+
     if (response.statusCode == 200) {
       final responseBody = json.decode(response.body);
-      // print(responseBody);
       getUserFromToken(responseBody['auth_token'], authController);
-      // Navigate to home screen or perform any other actions
     } else if (response.statusCode == 408) {
-      _showFailureDialog('Request timed out. Please try again.');
+      showFailureDialog('Request timed out. Please try again.');
     } else {
-      // Handle HTTP errors
-      throw Exception('Failed to login: ${response.statusCode}');
+      showFailureDialog('Failed to login: ${response.statusCode}');
     }
   } on SocketException {
-    // Handle SocketException: No internet connection or server not reachable
-    _showFailureDialog('No internet connection or server not reachable.');
+    showFailureDialog('No internet connection or server not reachable.');
   } catch (e) {
     print("Error occurred:");
-    _showFailureDialog('Invalid username or password. Please try again.');
+    showFailureDialog('Invalid username or password. Please try again.');
   }
 }
 
 void getUserFromToken(String token, AuthController authController) async {
   try {
+    Uri url = Uri.parse('${dotenv.env['API_BASE_URL']}user/me/');
+    String authToken = 'Token $token';
     final response = await http
-        .get(Uri.parse('${dotenv.env['API_BASE_URL']}user/me/'), headers: {
-      // 'Content-Type': 'application/json; charset=UTF-8',
-      'Authorization': 'Token $token'
+        .get(url, headers: {'Authorization': authToken}).timeout(
+            const Duration(seconds: DEFAULT_TIMEOUT_SECONDS), onTimeout: () {
+      return http.Response('Error', 408);
     });
 
     if (response.statusCode == 200) {
@@ -77,38 +83,16 @@ void getUserFromToken(String token, AuthController authController) async {
       print(responseBody);
       authController.login(token, responseBody);
       Get.offAllNamed(RoutesUrls.homePage);
-      Get.snackbar(
-        'Success!',
-        'You have logged in successfuly to your account.',
-        backgroundColor: const Color.fromARGB(255, 71, 120, 73),
-        colorText: Colors.white,
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2), // Set duration
-      );
-      print('login success');
+      showSuccessSnackbar('You have logged in successfuly to your account.');
+    } else if (response.statusCode == 408) {
+      showErrorSnackbar('Request timed out. Please try again.');
     } else {
-      throw Exception('Failed to get user: ${response.statusCode}');
+      showFailureDialog('Failed to get user: ${response.statusCode}');
     }
   } on SocketException {
-    // Handle SocketException: No internet connection or server not reachable
-    _showFailureDialog('No internet connection or server not reachable.');
+    showFailureDialog('No internet connection or server not reachable.');
   } catch (e) {
-    print('error getting user');
-    _showFailureDialog('Invalid username or password. Please try again.');
+    print('error getting user $e');
+    showFailureDialog('Invalid username or password. Please try again.');
   }
-}
-
-void _showFailureDialog(String msg) {
-  Get.defaultDialog(
-    title: 'Error',
-    content: Padding(
-      padding: const EdgeInsets.all(8.0),
-      child: Text(
-        msg,
-        textAlign: TextAlign.center,
-      ),
-    ),
-    textConfirm: 'OK',
-    onConfirm: () => Get.back(), // Close the dialog
-  );
 }

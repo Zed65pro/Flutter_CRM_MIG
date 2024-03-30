@@ -5,7 +5,7 @@ import 'package:crm/api_services/customer_api_services.dart';
 import 'package:crm/controllers/auth.dart';
 import 'package:crm/models/customer.dart';
 import 'package:crm/pages/customers/components/customer_card.dart';
-import 'package:crm/pages/home_page/components/home_appbar.dart';
+import 'package:crm/components/appbar/home_appbar.dart';
 import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:crm/pages/customers/components/search_bar.dart';

@@ -1,8 +1,8 @@
 import 'package:crm/api_services/user_api_services.dart';
 import 'package:crm/controllers/auth.dart';
-import 'package:crm/pages/home_page/components/nav_bar.dart';
-import 'package:crm/pages/home_page/components/home_appbar.dart';
-import 'package:crm/pages/home_page/components/home_features.dart';
+import 'package:crm/components/appbar/nav_bar.dart';
+import 'package:crm/components/appbar/home_appbar.dart';
+import 'package:crm/components/appbar/home_features.dart';
 import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';

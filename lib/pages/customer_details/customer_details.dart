@@ -8,7 +8,7 @@ import 'package:http/http.dart' as http;
 import 'package:crm/controllers/auth.dart';
 import 'package:crm/models/service.dart';
 import 'package:crm/pages/customers/components/search_bar.dart';
-import 'package:crm/pages/home_page/components/home_appbar.dart';
+import 'package:crm/components/appbar/home_appbar.dart';
 import 'package:flutter/material.dart';
 import 'package:crm/models/customer.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
