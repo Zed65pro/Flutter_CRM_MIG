@@ -13,7 +13,7 @@ class HomeFeatures extends StatelessWidget {
   final AuthController authController;
 
   // Define a centralized variable for the button color
-  final Color buttonColor = Color.fromARGB(197, 92, 101, 224);
+  final Color buttonColor = const Color.fromARGB(197, 92, 101, 224);
 
   // Define a list of button data
   final List<Map<String, dynamic>> buttons = [

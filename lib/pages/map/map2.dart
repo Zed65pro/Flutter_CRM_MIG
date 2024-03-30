@@ -1,9 +1,6 @@
 import 'package:firstapp/controllers/location.dart';
-import 'package:firstapp/pages/map/map2_input.dart';
 import 'package:firstapp/pages/map/misc/tile_providers.dart';
 import 'package:flutter/material.dart';
-import 'package:geocoding/geocoding.dart';
-import 'package:geolocator/geolocator.dart'; // Import geolocator package
 import 'package:get/get.dart';
 import 'package:latlong2/latlong.dart';
 import 'package:flutter_map/flutter_map.dart';

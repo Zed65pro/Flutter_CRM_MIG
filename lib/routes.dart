@@ -1,4 +1,5 @@
 // routes.dart
+import 'package:firstapp/pages/camera/job_camera.dart';
 import 'package:firstapp/pages/create_customer/create_customer.dart';
 import 'package:firstapp/pages/create_service/create_service.dart';
 import 'package:firstapp/pages/customer_details/customer_details.dart';
@@ -9,7 +10,6 @@ import 'package:firstapp/pages/home_page/home_page.dart';
 import 'package:firstapp/middlewares/auth.dart';
 import 'package:firstapp/pages/login_page/login_page.dart';
 import 'package:firstapp/pages/map/direction_map.dart';
-import 'package:firstapp/pages/map/map2.dart';
 import 'package:firstapp/pages/service_details/service_details.dart';
 import 'package:firstapp/pages/services/services_page.dart';
 import 'package:firstapp/splash_screen.dart';
@@ -86,6 +86,12 @@ class AppRoutes {
       //Customer create page
       name: RoutesUrls.displayMap,
       page: () => const DirectionMap(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      //Customer create page
+      name: RoutesUrls.jobCamera,
+      page: () => const JobCamera(),
       middlewares: [AuthMiddleware()],
     ),
   ];

@@ -24,7 +24,9 @@ class LocationController extends GetxController {
         userLocation.value = LatLng(savedLatitude, savedLongitude);
       } else {
         Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.high,
+          desiredAccuracy: LocationAccuracy.medium, // Adjust accuracy level
+          timeLimit:
+              const Duration(seconds: 5), // Limit the time to retrieve location
         );
         userLocation.value = LatLng(position.latitude, position.longitude);
         // Save location to shared preferences

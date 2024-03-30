@@ -10,7 +10,7 @@ import 'package:firstapp/pages/map/misc/tile_providers.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class DirectionMap extends StatefulWidget {
-  const DirectionMap({Key? key}) : super(key: key);
+  const DirectionMap({super.key});
 
   @override
   State<DirectionMap> createState() => _DirectionMapState();
@@ -25,7 +25,8 @@ class _DirectionMapState extends State<DirectionMap> {
   void initState() {
     super.initState();
     _requestLocationPermission();
-    _listenForLocationChanges();
+    // _listenForLocationChanges();
+    locationController.removeLocationFromSharedPreferences();
   }
 
   Future<void> _requestLocationPermission() async {
@@ -34,13 +35,13 @@ class _DirectionMapState extends State<DirectionMap> {
       print('Location permission denied');
     } else {
       print('Location permission granted');
+      _listenForLocationChanges();
     }
   }
 
   void _listenForLocationChanges() {
     Geolocator.getPositionStream().listen((Position position) {
-      print(
-          "live tracking: " + locationController.userLocation.value.toString());
+      print("live tracking: ${locationController.userLocation.value}");
       locationController
           .updateLocation(LatLng(position.latitude, position.longitude));
       _calculateRoute(locationController.userLocation.value!, _jobLocation);
@@ -83,7 +84,8 @@ class _DirectionMapState extends State<DirectionMap> {
       ),
       backgroundColor: Colors.grey[300],
       body: Obx(() {
-        if (!locationController.loading.value) {
+        if (!locationController.loading.value &&
+            locationController.userLocation.value != null) {
           return Padding(
             padding: const EdgeInsets.all(12.0),
             child: FlutterMap(
