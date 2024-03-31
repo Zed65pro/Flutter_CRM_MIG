@@ -1,3 +1,5 @@
+import 'package:latlong2/latlong.dart';
+
 class Point {
   double latitude;
   double longitude;
@@ -6,8 +8,8 @@ class Point {
 
   factory Point.fromJson(double longitude, double latitude) {
     return Point(
-      latitude: longitude,
-      longitude: latitude,
+      latitude: latitude,
+      longitude: longitude,
     );
   }
 
@@ -16,5 +18,16 @@ class Point {
       'latitude': latitude,
       'longitude': longitude,
     };
+  }
+
+  static Point fromLatLng(LatLng latLng) {
+    return Point(
+      latitude: latLng.latitude,
+      longitude: latLng.longitude,
+    );
+  }
+
+  LatLng toLatLng() {
+    return LatLng(latitude, longitude);
   }
 }

@@ -6,14 +6,14 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
 
-class JobCamera extends StatefulWidget {
-  const JobCamera({super.key});
+class JobDetailsCamera extends StatefulWidget {
+  const JobDetailsCamera({super.key});
 
   @override
-  State<JobCamera> createState() => _JobCameraState();
+  State<JobDetailsCamera> createState() => _JobDetailsCameraState();
 }
 
-class _JobCameraState extends State<JobCamera> {
+class _JobDetailsCameraState extends State<JobDetailsCamera> {
   bool isOverlayVisible = false;
   String? overlayPhotoPath;
   final JobPhotoController jobPhotoController = Get.find();
@@ -56,7 +56,7 @@ class _JobCameraState extends State<JobCamera> {
         onMediaTap: (mediaCapture) {
           mediaCapture.captureRequest.when(
             single: (single) {
-              print('niggas see me rollin');
+              debugPrint('single: ${single.file?.path}');
               setState(() {
                 isOverlayVisible = true;
                 overlayPhotoPath = single.file?.path;

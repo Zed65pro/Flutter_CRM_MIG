@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
@@ -6,21 +8,32 @@ import 'package:latlong2/latlong.dart';
 class LocationController extends GetxController {
   Rx<LatLng?> userLocation = Rx<LatLng?>(null);
   final RxBool _loading = true.obs;
+  // late Timer _locationTimer;
 
   @override
   void onInit() async {
     super.onInit();
-    await fetchLocation();
+    await fetchLocation(load: true);
+    // _locationTimer = Timer.periodic(const Duration(minutes: 5), (timer) {
+    //   fetchLocation(load: true);
+    // });
   }
 
-  Future<void> fetchLocation() async {
+  @override
+  void dispose() {
+    // _locationTimer.cancel();
+    removeLocationFromSharedPreferences();
+    super.dispose();
+  }
+
+  Future<void> fetchLocation({bool load = false}) async {
     _loading.value = true;
     try {
       SharedPreferences prefs = await SharedPreferences.getInstance();
       double? savedLatitude = prefs.getDouble('latitude');
       double? savedLongitude = prefs.getDouble('longitude');
 
-      if (savedLatitude != null && savedLongitude != null) {
+      if (savedLatitude != null && savedLongitude != null && !load) {
         userLocation.value = LatLng(savedLatitude, savedLongitude);
       } else {
         Position position = await Geolocator.getCurrentPosition(

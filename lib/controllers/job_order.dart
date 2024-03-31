@@ -36,7 +36,6 @@ class JobOrderController extends GetxController {
     try {
       final results = await fetchJobOrdersApi(
           authController.token, query.text, currentPage, pageSize);
-      print(results);
       if (results != null) {
         if (results[0].isEmpty) {
           jobOrders.clear();

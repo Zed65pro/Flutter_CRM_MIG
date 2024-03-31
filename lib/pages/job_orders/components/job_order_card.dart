@@ -1,4 +1,5 @@
 import 'package:crm/models/job_order.dart';
+import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -14,7 +15,9 @@ class JobOrderCard extends StatelessWidget {
       margin: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
       child: ListTile(
         title: Text(
-          jobOrder.name,
+          jobOrder.name.length < 10
+              ? jobOrder.name
+              : '${jobOrder.name.substring(0, 10)}...',
           style: const TextStyle(
             fontSize: 16,
             fontWeight: FontWeight.bold,
@@ -50,7 +53,7 @@ class JobOrderCard extends StatelessWidget {
           ],
         ),
         onTap: () {
-          // Get.toNamed(RoutesUrls.customerDetails, arguments: customer);
+          Get.toNamed(RoutesUrls.jobOrderDetails, arguments: jobOrder);
         },
       ),
     );

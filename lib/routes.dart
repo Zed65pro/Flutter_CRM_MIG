@@ -1,4 +1,6 @@
 // routes.dart
+import 'package:crm/pages/job_order_details/components/job_details_camera.dart';
+import 'package:crm/pages/job_order_details/job_order_details_page.dart';
 import 'package:crm/pages/job_orders/components/job_camera.dart';
 import 'package:crm/pages/create_customer/create_customer.dart';
 import 'package:crm/pages/create_service/create_service.dart';
@@ -92,13 +94,19 @@ class AppRoutes {
     GetPage(
       //Customer create page
       name: RoutesUrls.jobCamera,
-      page: () => const JobCamera(),
+      page: () => const JobDetailsCamera(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(
       //Customer create page
       name: RoutesUrls.jobOrder,
-      page: () => JobOrderPage(),
+      page: () => const JobOrderPage(),
+      middlewares: [AuthMiddleware()],
+    ),
+    GetPage(
+      //Customer create page
+      name: RoutesUrls.jobOrderDetails,
+      page: () => const JobOrderDetails(),
       middlewares: [AuthMiddleware()],
     ),
   ];

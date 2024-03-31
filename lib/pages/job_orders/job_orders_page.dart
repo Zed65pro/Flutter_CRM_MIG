@@ -77,7 +77,6 @@ class _JobOrderPageState extends State<JobOrderPage> {
     final count = jobOrderController.count;
     final currentPage = jobOrderController.currentPage;
     final pageSize = jobOrderController.pageSize;
-
     int totalPages = (count / pageSize).ceil();
     return SingleChildScrollView(
       scrollDirection: Axis.horizontal,

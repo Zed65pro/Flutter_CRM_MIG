@@ -14,6 +14,7 @@ class RoutesUrls {
     'display_map': '/display_map',
     'job_camera': '/job_camera',
     'job_order_page': '/job_order_page',
+    'job_order_details': '/job_order_details',
   };
 
   static String get loginPage => _routes['login_page']!;
@@ -30,4 +31,5 @@ class RoutesUrls {
   static String get displayMap => _routes['display_map']!;
   static String get jobCamera => _routes['job_camera']!;
   static String get jobOrder => _routes['job_order_page']!;
+  static String get jobOrderDetails => _routes['job_order_details']!;
 }
