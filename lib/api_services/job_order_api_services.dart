@@ -141,41 +141,51 @@ Future<bool> deleteJobOrder(String token, String jobId) async {
   return false;
 }
 
-Future<bool> addJobOrderImage({
-  required String jobId,
+Future<dynamic> addJobOrderImage({
+  required int jobId,
   required String imagePath,
   required String token,
 }) async {
   try {
-    Uri url =
-        Uri.parse('${dotenv.env['API_BASE_URL']}joborders/$jobId/images/');
+    Uri url = Uri.parse('${dotenv.env['API_BASE_URL']}joborders/image/$jobId/');
     String authToken = 'Token $token';
 
     // Read the image file
-    File imageFile = File(imagePath);
-    List<int> imageBytes = await imageFile.readAsBytes();
-    String base64Image = base64Encode(imageBytes);
+    // File imageFile = File(imagePath);
+    // List<int> imageBytes = await imageFile.readAsBytes();
+    // String base64Image = base64Encode(imageBytes);
 
-    Map<String, dynamic> body = {
-      'file': base64Image,
-    };
+    // Map<String, dynamic> body = {
+    //   'file': base64Image,
+    // };
 
-    final response = await http
-        .post(
-      url,
-      headers: {
-        'Authorization': authToken,
-        'Content-Type': 'application/json',
-      },
-      body: jsonEncode(body),
-    )
-        .timeout(const Duration(seconds: DEFAULT_TIMEOUT_SECONDS),
-            onTimeout: () {
-      return http.Response('Error', 408);
-    });
+    // final response = await http
+    //     .post(
+    //   url,
+    //   headers: {
+    //     'Authorization': authToken,
+    //     // 'Content-Type': 'application/json',
+    //   },
+    //   body: jsonEncode(body),
+    // )
+    //     .timeout(const Duration(seconds: DEFAULT_TIMEOUT_SECONDS),
+    //         onTimeout: () {
+    //   return http.Response('Error', 408);
+    // });
+    // Create a multipart request
+    var request = http.MultipartRequest('POST', url);
+    request.headers['Authorization'] = authToken;
+    // Attach the image file
+    var file = await http.MultipartFile.fromPath('file', imagePath);
+    request.files.add(file);
+    // Send the request
+    var streamedResponse = await request.send();
+    // Handle the response
+    var response = await http.Response.fromStream(streamedResponse);
 
+    print(json.decode(response.body));
     if (response.statusCode == 201) {
-      return true;
+      return json.decode(response.body);
     } else if (response.statusCode == 408) {
       showErrorSnackbar('Request timed out. Please try again.');
     } else {
@@ -211,6 +221,7 @@ Future<dynamic> fetchJobOrdersApi(
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       final List<dynamic> results = responseData['results'];
+      print(results);
       final List<JobOrder> jobOrderList =
           results.map((json) => JobOrder.fromJson(json)).toList();
       // print(results);

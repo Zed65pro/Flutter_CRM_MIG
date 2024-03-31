@@ -174,7 +174,8 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                     const SizedBox(height: 20),
                     ElevatedButton(
                       onPressed: () {
-                        Get.toNamed(RoutesUrls.jobCamera);
+                        Get.toNamed(RoutesUrls.jobCamera,
+                            arguments: jobOrder.id);
                       },
                       child: Text(
                         jobPhotoController.photoPath.value.isEmpty
@@ -233,6 +234,14 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                 ),
               ),
               const SizedBox(height: 20),
+              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+                ElevatedButton(
+                    onPressed: () => {},
+                    style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color.fromARGB(255, 255, 238, 1)
+                            .withOpacity(0.8)),
+                    child: const Text('Send Feedback'))
+              ])
             ],
           ),
         ),

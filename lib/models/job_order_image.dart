@@ -3,14 +3,12 @@ import 'package:crm/models/user.dart';
 class JobOrderImage {
   int id;
   String file;
-  DateTime uploadedAt;
   DateTime createdAt;
   User uploadedBy;
 
   JobOrderImage({
     required this.id,
     required this.file,
-    required this.uploadedAt,
     required this.createdAt,
     required this.uploadedBy,
   });
@@ -20,9 +18,8 @@ class JobOrderImage {
     return JobOrderImage(
       id: json['id'],
       file: json['file'],
-      uploadedAt: DateTime.parse(json['uploadedAt']),
-      createdAt: DateTime.parse(json['createdAt']),
-      uploadedBy: User.fromJson(json['uploadedBy']),
+      createdAt: DateTime.parse(json['created_at']),
+      uploadedBy: User.fromJson(json['uploaded_by']),
     );
   }
 
@@ -30,7 +27,6 @@ class JobOrderImage {
     return {
       'id': id,
       'file': file,
-      'uploadedAt': uploadedAt.toIso8601String(),
       'createdAt': createdAt.toIso8601String(),
       'uploadedBy': uploadedBy.toJson(),
     };

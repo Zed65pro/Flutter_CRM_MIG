@@ -1,6 +1,6 @@
 import 'dart:io';
 import 'package:camerawesome/camerawesome_plugin.dart';
-import 'package:camerawesome/pigeon.dart';
+import 'package:crm/controllers/auth.dart';
 import 'package:crm/controllers/job_photo.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -8,15 +8,28 @@ import 'package:path_provider/path_provider.dart';
 
 class JobDetailsCamera extends StatefulWidget {
   const JobDetailsCamera({super.key});
-
   @override
   State<JobDetailsCamera> createState() => _JobDetailsCameraState();
 }
 
 class _JobDetailsCameraState extends State<JobDetailsCamera> {
+  late int jobId;
+  final AuthController authController = Get.find();
   bool isOverlayVisible = false;
   String? overlayPhotoPath;
   final JobPhotoController jobPhotoController = Get.find();
+
+  @override
+  void initState() {
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    jobId = ModalRoute.of(context)!.settings.arguments as int;
+    super.didChangeDependencies();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(children: [
@@ -74,8 +87,9 @@ class _JobDetailsCameraState extends State<JobDetailsCamera> {
       if (isOverlayVisible && overlayPhotoPath != null)
         PhotoOverlay(
             photoPath: overlayPhotoPath!,
-            onConfirm: () {
-              jobPhotoController.updatePhoto(overlayPhotoPath!);
+            onConfirm: () async {
+              await jobPhotoController.addPhoto(
+                  overlayPhotoPath!, jobId, authController.token);
               Get.back();
             },
             onTakePhotoAgain: closeOverlay),

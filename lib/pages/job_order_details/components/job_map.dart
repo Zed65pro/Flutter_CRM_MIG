@@ -80,7 +80,7 @@ class _JobMapState extends State<JobMap> {
             child: FlutterMap(
               options: MapOptions(
                 initialCenter: locationController.userLocation.value!,
-                initialZoom: 14,
+                initialZoom: 18,
                 interactionOptions: const InteractionOptions(
                   flags: ~InteractiveFlag.doubleTapZoom,
                 ),

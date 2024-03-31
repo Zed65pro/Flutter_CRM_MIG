@@ -75,7 +75,7 @@ class _JobCameraState extends State<JobCamera> {
         PhotoOverlay(
             photoPath: overlayPhotoPath!,
             onConfirm: () {
-              jobPhotoController.updatePhoto(overlayPhotoPath!);
+              // jobPhotoController.add(overlayPhotoPath!);
               Get.back();
             },
             onTakePhotoAgain: closeOverlay),

@@ -89,6 +89,7 @@ class JobOrderController extends GetxController {
             case 'location':
               jobOrders[jobOrderIndex].location = value as Point;
             case 'images':
+              print("added");
               jobOrders[jobOrderIndex].images.add(value as JobOrderImage);
             default:
               throw Exception('Invalid field name: $key');
