@@ -9,7 +9,6 @@ import 'package:crm/controllers/auth.dart';
 import 'package:crm/components/appbar/home_appbar.dart';
 import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
 class JobOrderDetails extends StatefulWidget {
@@ -37,13 +36,13 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
     return Scaffold(
       // Set a light background color
       // resizeToAvoidBottomInset: true,
-      appBar: HomeAppBar(title: 'Customer Details'),
+      appBar: HomeAppBar(title: 'Job Order Details'),
       body: SingleChildScrollView(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            mainAxisSize: MainAxisSize.max,
+            // crossAxisAlignment: CrossAxisAlignment.start,
+            // mainAxisSize: MainAxisSize.max,
             children: [
               JobOrderCardDetails(jobOrder: jobOrder),
               const SizedBox(height: 16),
@@ -149,41 +148,41 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                 ),
               ),
               const SizedBox(height: 16),
-              Center(
-                child: Column(
-                  children: [
-                    const SizedBox(height: 20),
-                    Obx(() {
-                      final photoPath = jobPhotoController.photoPath.value;
-                      if (photoPath.isEmpty) {
-                        return const Center(
-                            child: Text('No photos provided..'));
-                      } else {
+              const SizedBox(height: 20),
+              Obx(() {
+                if (images.isEmpty) {
+                  return const Center(child: Text('No photos provided..'));
+                } else {
+                  return SizedBox(
+                    height: Get.height / 3,
+                    child: PageView.builder(
+                      scrollDirection: Axis.horizontal,
+                      itemCount: images.length,
+                      itemBuilder: (BuildContext context, int index) {
                         return Container(
-                          width: 200,
-                          height: 200,
+                          margin: const EdgeInsets.symmetric(horizontal: 8.0),
+                          width: Get.width / 1.5, // Adjust as needed
                           decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(10.0),
                             image: DecorationImage(
-                              image: FileImage(File(photoPath)),
+                              image: NetworkImage(images[index].file),
                               fit: BoxFit.cover,
                             ),
                           ),
                         );
-                      }
-                    }),
-                    const SizedBox(height: 20),
-                    ElevatedButton(
-                      onPressed: () {
-                        Get.toNamed(RoutesUrls.jobCamera,
-                            arguments: jobOrder.id);
                       },
-                      child: Text(
-                        jobPhotoController.photoPath.value.isEmpty
-                            ? 'Add Completion Photo'
-                            : 'Add more Photo',
-                      ),
                     ),
-                  ],
+                  );
+                }
+              }),
+              const SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  // print(images.map((e) => e.toJson()));
+                  Get.toNamed(RoutesUrls.jobCamera, arguments: jobOrder.id);
+                },
+                child: Text(
+                  images.isEmpty ? 'Add Completion Photo' : 'Add more Photos',
                 ),
               ),
               const SizedBox(height: 16),

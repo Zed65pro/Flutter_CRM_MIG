@@ -221,7 +221,7 @@ Future<dynamic> fetchJobOrdersApi(
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       final List<dynamic> results = responseData['results'];
-      print(results);
+      // print(results);
       final List<JobOrder> jobOrderList =
           results.map((json) => JobOrder.fromJson(json)).toList();
       // print(results);

@@ -22,7 +22,7 @@ class _JobOrderPageState extends State<JobOrderPage> {
     final jobOrders = jobOrderController.jobOrders;
 
     return Scaffold(
-      appBar: HomeAppBar(),
+      appBar: HomeAppBar(title: 'Job Orders'),
       body: RefreshIndicator(
         onRefresh: jobOrderController.fetchJobOrders,
         child: ListView(

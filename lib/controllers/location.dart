@@ -36,6 +36,7 @@ class LocationController extends GetxController {
       if (savedLatitude != null && savedLongitude != null && !load) {
         userLocation.value = LatLng(savedLatitude, savedLongitude);
       } else {
+        print('asdas');
         Position position = await Geolocator.getCurrentPosition(
           desiredAccuracy: LocationAccuracy.medium, // Adjust accuracy level
           timeLimit:

@@ -14,7 +14,6 @@ class JobOrderImage {
   });
 
   factory JobOrderImage.fromJson(Map<String, dynamic> json) {
-    print(json);
     return JobOrderImage(
       id: json['id'],
       file: json['file'],

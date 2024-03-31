@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:crm/components/dialogs/dialogs.dart';
+import 'package:crm/controllers/job_order.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -37,8 +38,12 @@ class _JobMapState extends State<JobMap> {
       print('Location permission denied');
     } else {
       print('Location permission granted');
-      await _calculateRoute(
-          locationController.userLocation.value!, jobLocation);
+      final userLocation = locationController.userLocation.value;
+      if (userLocation != null) {
+        await _calculateRoute(userLocation, jobLocation);
+      } else {
+        print('User location is null');
+      }
     }
   }
 
@@ -47,11 +52,9 @@ class _JobMapState extends State<JobMap> {
     var v2 = start.longitude;
     var v3 = end.latitude;
     var v4 = end.longitude;
-
     var url = Uri.parse(
         'http://router.project-osrm.org/route/v1/driving/$v2,$v1;$v4,$v3?steps=true&annotations=true&geometries=geojson&overview=full');
     var response = await http.get(url);
-
     if (response.statusCode == 200) {
       var jsonResponse = jsonDecode(response.body);
       var router =
@@ -124,53 +127,69 @@ class _JobMapState extends State<JobMap> {
               ],
             ),
           ),
-          Positioned(
-            top: 20,
-            right: 20,
-            child: AnimatedContainer(
-              duration: const Duration(milliseconds: 300),
-              curve: Curves.easeInOut,
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.white,
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.grey.withOpacity(0.5),
-                    spreadRadius: 2,
-                    blurRadius: 5,
-                    offset: const Offset(0, 3), // changes position of shadow
-                  ),
-                ],
-              ),
-              child: Material(
-                color: Colors.transparent,
-                child: InkWell(
-                  onTap: () async {
-                    await locationController.fetchLocation(load: true);
-                    await _calculateRoute(
-                        locationController.userLocation.value!, jobLocation);
-                  },
-                  borderRadius: BorderRadius.circular(25),
-                  child: Container(
-                    padding: const EdgeInsets.all(12),
-                    child: const Tooltip(
-                      message: 'Refresh Location',
-                      child: Icon(
-                        Icons.refresh,
-                        color: Colors.blue,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          )
+          Positioned(top: 20, right: 20, child: refreshLocationIndicator())
         ]);
-      } else {
+      } else if (locationController.loading.value) {
         return const Center(
-          child: CircularProgressIndicator(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              CircularProgressIndicator(),
+              SizedBox(height: 16),
+              Text('Calculating the route...'),
+            ],
+          ),
+        );
+      } else {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Text('Route information not available.'),
+              const SizedBox(height: 16),
+              refreshLocationIndicator(),
+            ],
+          ),
         );
       }
     });
+  }
+
+  Container refreshLocationIndicator() {
+    return Container(
+      decoration: BoxDecoration(
+        shape: BoxShape.circle,
+        color: Colors.white,
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: const Offset(0, 3), // changes position of shadow
+          ),
+        ],
+      ),
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          onTap: () async {
+            await locationController.fetchLocation(load: true);
+            await _calculateRoute(
+                locationController.userLocation.value!, jobLocation);
+          },
+          borderRadius: BorderRadius.circular(25),
+          child: Container(
+            padding: const EdgeInsets.all(12),
+            child: const Tooltip(
+              message: 'Refresh Location',
+              child: Icon(
+                Icons.refresh,
+                color: Colors.blue,
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
   }
 }
