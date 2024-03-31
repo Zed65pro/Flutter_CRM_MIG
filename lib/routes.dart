@@ -98,7 +98,7 @@ class AppRoutes {
     GetPage(
       //Customer create page
       name: RoutesUrls.jobOrder,
-      page: () => JobOrder(),
+      page: () => JobOrderPage(),
       middlewares: [AuthMiddleware()],
     ),
   ];

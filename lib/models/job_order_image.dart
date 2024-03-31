@@ -1,7 +1,7 @@
 import 'package:crm/models/user.dart';
 
 class JobOrderImage {
-  String id;
+  int id;
   String file;
   DateTime uploadedAt;
   DateTime createdAt;
@@ -16,6 +16,7 @@ class JobOrderImage {
   });
 
   factory JobOrderImage.fromJson(Map<String, dynamic> json) {
+    print(json);
     return JobOrderImage(
       id: json['id'],
       file: json['file'],

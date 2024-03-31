@@ -1,9 +1,10 @@
 import 'package:crm/models/job_order_image.dart';
 import 'package:crm/models/point.dart';
 import 'package:crm/models/user.dart';
+import 'package:get/get.dart';
 
 class JobOrder {
-  String id;
+  int id;
   String name;
   String description;
   String area;
@@ -45,17 +46,19 @@ class JobOrder {
       area: json['area'],
       city: json['city'],
       street: json['street'],
-      phoneNumber: json['phoneNumber'],
+      phoneNumber: json['phone_number'],
       email: json['email'],
-      location: Point.fromJson(json['location']),
+      location: Point.fromJson(json['longitude'], json['latitude']),
       feedback: json['feedback'],
       status: json['status'],
-      createdAt: DateTime.parse(json['createdAt']),
-      updatedAt: DateTime.parse(json['updatedAt']),
-      createdBy: User.fromJson(json['createdBy']),
-      images: (json['images'] as List<dynamic>)
-          .map((e) => JobOrderImage.fromJson(e))
-          .toList(),
+      createdAt: DateTime.parse(json['created_at']),
+      updatedAt: DateTime.parse(json['updated_at']),
+      createdBy: User.fromJson(json['created_by']),
+      images: json['images'] != null || json['images'].isBlank
+          ? (json['images'] as List<dynamic>)
+              .map((e) => JobOrderImage.fromJson(e))
+              .toList()
+          : [],
     );
   }
 

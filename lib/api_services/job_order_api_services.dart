@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:crm/components/dialogs/dialogs.dart';
+import 'package:crm/models/job_order.dart';
 import 'package:crm/models/point.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:http/http.dart' as http;
@@ -188,4 +189,41 @@ Future<bool> addJobOrderImage({
     showErrorSnackbar('Failed to add image to job order. Please try again.');
   }
   return false;
+}
+
+Future<dynamic> fetchJobOrdersApi(
+    String token, String search, int currentPage, int pageSize) async {
+  try {
+    print(token);
+    Uri url = Uri.parse(
+        '${dotenv.env['API_BASE_URL']}joborders/?search=$search&page=$currentPage&pageSize=$pageSize/');
+    String authToken = 'Token $token';
+    if (search.isNotEmpty) {
+      currentPage = 1;
+    }
+    final response = await http.get(
+      url,
+      headers: {'Authorization': authToken},
+    ).timeout(const Duration(seconds: 3), onTimeout: () {
+      return http.Response('Error', 408);
+    });
+
+    if (response.statusCode == 200) {
+      final Map<String, dynamic> responseData = json.decode(response.body);
+      final List<dynamic> results = responseData['results'];
+      final List<JobOrder> jobOrderList =
+          results.map((json) => JobOrder.fromJson(json)).toList();
+
+      return [jobOrderList, responseData['count'], currentPage];
+    } else if (response.statusCode == 408) {
+      showFailureDialog('Request timed out. Please try again later');
+    } else {
+      showFailureDialog('Failed to get job Orders.');
+    }
+  } on SocketException {
+    showFailureDialog('No internet connection or server is unreachable');
+  } catch (e) {
+    print('Error fetching job orders: $e');
+    rethrow; // Rethrow the error to be caught by the FutureBuilder
+  }
 }

@@ -4,10 +4,10 @@ class Point {
 
   Point({required this.latitude, required this.longitude});
 
-  factory Point.fromJson(Map<String, dynamic> json) {
+  factory Point.fromJson(double longitude, double latitude) {
     return Point(
-      latitude: json['latitude'],
-      longitude: json['longitude'],
+      latitude: longitude,
+      longitude: latitude,
     );
   }
 
