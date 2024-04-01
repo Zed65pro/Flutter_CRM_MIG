@@ -92,13 +92,18 @@ class JobOrderController extends GetxController {
               break;
             case 'location':
               selectedJobOrder.value?.location = value as Point;
+              break;
             case 'images':
-              selectedJobOrder.value?.images.add(value as JobOrderImage);
+              selectedJobOrder.value?.images.insert(0, value as JobOrderImage);
+              break;
             case 'comments':
-              selectedJobOrder.value?.comments.add(value as JobOrderComment);
+              selectedJobOrder.value?.comments
+                  .insert(0, value as JobOrderComment);
+              break;
             default:
               throw Exception('Invalid field name: $key');
           }
+          update();
         });
       } else {
         throw Exception('big faillll');
@@ -144,9 +149,10 @@ class JobOrderController extends GetxController {
             case 'location':
               jobOrders[jobOrderIndex].location = value as Point;
             case 'images':
-              jobOrders[jobOrderIndex].images.add(value as JobOrderImage);
+              jobOrders[jobOrderIndex].images.insert(0, value as JobOrderImage);
             case 'comments':
-              selectedJobOrder.value?.comments.add(value as JobOrderComment);
+              selectedJobOrder.value?.comments
+                  .insert(0, value as JobOrderComment);
             default:
               throw Exception('Invalid field name: $key');
           }
@@ -169,14 +175,14 @@ class JobOrderController extends GetxController {
     final result =
         await addJobOrderComment(jobId: jobId, body: body, token: token);
     if (result != false) {
-      return result;
+      // return result;
       // List<JobOrderComment> copiedList =
       //     List<JobOrderComment>.from(jobOrder.comments);
       // copiedList.insert(0, JobOrderComment.fromJson(result));
       // selectedJobOrder.value?.comments = copiedList;
       // updatedJobOrder.comments
       // updateFields(jobId, {'comments': JobOrderComment.fromJson(result)});
-      // updateFieldsSelectedJob({'comments': JobOrderComment.fromJson(result)});
+      updateFieldsSelectedJob({'comments': JobOrderComment.fromJson(result)});
     }
   }
 

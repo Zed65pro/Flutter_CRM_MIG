@@ -103,6 +103,7 @@ class HomePage extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () {
+                        // authController.logout();
                         handleLogout(authController);
                       },
                       style: ElevatedButton.styleFrom(

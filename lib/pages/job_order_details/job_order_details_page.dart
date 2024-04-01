@@ -21,8 +21,6 @@ class JobOrderDetails extends StatefulWidget {
 
 class _JobOrderDetailsState extends State<JobOrderDetails> {
   final AuthController authController = Get.find();
-  late RxList<JobOrderImage> images;
-  late Rx<JobOrder> jobOrder;
   final JobPhotoController jobPhotoController = Get.put(JobPhotoController());
   final JobOrderController jobOrderController = Get.find();
   final TextEditingController feedbackController = TextEditingController();
@@ -31,9 +29,6 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    jobOrder = jobOrderController.selectedJobOrder.value!.obs;
-    feedbackController.text = jobOrder.value.feedback;
-    images = jobOrder.value.images.obs;
   }
 
   @override
@@ -43,256 +38,266 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
       body: SingleChildScrollView(
         child: Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Obx(() {
-              return Column(
-                children: [
-                  JobOrderCardDetails(jobOrder: jobOrder.value),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            child: GetBuilder<JobOrderController>(
+                init: JobOrderController(),
+                builder: (controller) {
+                  final JobOrder? jobOrder = controller.selectedJobOrder.value;
+                  if (jobOrder == null) {
+                    return CircularProgressIndicator(); // or any other loading indicator
+                  }
+                  return Column(
                     children: [
+                      JobOrderCardDetails(jobOrder: jobOrder),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 16),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          const Text(
+                            'Modifications',
+                            style: TextStyle(
+                              fontSize: 24,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                          Row(
+                            children: [
+                              IconButton(
+                                icon: const Icon(Icons.edit,
+                                    color: Color.fromARGB(255, 54, 143, 215)),
+                                onPressed: () {},
+                              ),
+                            ],
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 16),
+                      const Center(
+                        child: Text(
+                          'Location',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      Center(
+                        child: SizedBox(
+                          height: Get.height / 3,
+                          width: Get.width,
+                          child: JobMap(
+                            jobLocation: jobOrder.location.toLatLng(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(height: 16),
+                      const Divider(),
+                      const SizedBox(height: 16),
+                      const Center(
+                        child: Text(
+                          'Submittal',
+                          style: TextStyle(
+                            fontSize: 24,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
                       const Text(
-                        'Modifications',
+                        'Images',
                         style: TextStyle(
-                          fontSize: 24,
+                          fontSize: 18,
                           fontWeight: FontWeight.bold,
                         ),
                       ),
-                      Row(
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.edit,
-                                color: Color.fromARGB(255, 54, 143, 215)),
-                            onPressed: () {},
+                      const SizedBox(height: 16),
+                      const SizedBox(height: 20),
+                      if (jobOrder.images.isEmpty)
+                        const Center(child: Text('No photos provided..'))
+                      else
+                        SizedBox(
+                          height: Get.height / 3,
+                          child: PageView.builder(
+                            scrollDirection: Axis.horizontal,
+                            itemCount: jobOrder.images.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin:
+                                    const EdgeInsets.symmetric(horizontal: 8.0),
+                                width: Get.width / 1.5, // Adjust as needed
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                ),
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: FadeInImage(
+                                    placeholder: const AssetImage(
+                                        'assets/images/loading.gif'),
+                                    image: NetworkImage(
+                                        jobOrder.images[index].file),
+                                    fit: BoxFit.cover,
+                                    fadeInDuration:
+                                        const Duration(milliseconds: 300),
+                                    fadeOutDuration:
+                                        const Duration(milliseconds: 300),
+                                  ),
+                                ),
+                              );
+                            },
                           ),
-                        ],
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  const Center(
-                    child: Text(
-                      'Location',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  Center(
-                    child: SizedBox(
-                      height: Get.height / 3,
-                      width: Get.width,
-                      child: JobMap(
-                        jobLocation: jobOrder.value.location.toLatLng(),
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const Divider(),
-                  const SizedBox(height: 16),
-                  const Center(
-                    child: Text(
-                      'Submittal',
-                      style: TextStyle(
-                        fontSize: 24,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                  ),
-                  const Text(
-                    'Images',
-                    style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  const SizedBox(height: 20),
-                  if (images.isEmpty)
-                    const Center(child: Text('No photos provided..'))
-                  else
-                    SizedBox(
-                      height: Get.height / 3,
-                      child: PageView.builder(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: images.length,
-                        itemBuilder: (BuildContext context, int index) {
-                          return Container(
-                            margin: const EdgeInsets.symmetric(horizontal: 8.0),
-                            width: Get.width / 1.5, // Adjust as needed
-                            decoration: BoxDecoration(
-                              borderRadius: BorderRadius.circular(10.0),
+                        ),
+                      Column(children: [
+                        const SizedBox(height: 16),
+                        ElevatedButton(
+                          onPressed: () {
+                            Get.toNamed(RoutesUrls.jobCamera,
+                                arguments: jobOrder.id);
+                          },
+                          child: Text(
+                            jobOrder.images.isEmpty
+                                ? 'Add Completion Photo'
+                                : 'Add more Photos',
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        const Text(
+                          'Feedback',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        if (jobOrder.feedback.isNotEmpty)
+                          const Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [
+                              Text('Feedback already provided',
+                                  style: TextStyle(
+                                    fontSize: 14,
+                                  )),
+                              Icon(
+                                Icons.feedback,
+                                color: Colors.green,
+                              )
+                            ],
+                          ),
+                        const SizedBox(height: 16),
+                        const SizedBox(height: 16),
+                        TextField(
+                          maxLines: 3,
+                          enabled: jobOrder.feedback.isEmpty,
+                          controller: feedbackController,
+                          style: const TextStyle(
+                            fontSize: 16.0,
+                            color: Colors.black87,
+                          ),
+                          decoration: InputDecoration(
+                            hintText: 'Enter your feedback...',
+                            hintStyle: TextStyle(
+                              color: Colors.grey[400],
                             ),
-                            child: ClipRRect(
+                            border: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(10.0),
-                              child: FadeInImage(
-                                placeholder: const AssetImage(
-                                    'assets/images/loading.gif'),
-                                image: NetworkImage(images[index].file),
-                                fit: BoxFit.cover,
-                                fadeInDuration:
-                                    const Duration(milliseconds: 300),
-                                fadeOutDuration:
-                                    const Duration(milliseconds: 300),
+                              borderSide: const BorderSide(
+                                color: Colors.blueAccent,
+                                width: 2.0,
                               ),
                             ),
-                          );
-                        },
-                      ),
-                    ),
-                  Column(children: [
-                    const SizedBox(height: 16),
-                    ElevatedButton(
-                      onPressed: () {
-                        Get.toNamed(RoutesUrls.jobCamera,
-                            arguments: jobOrder.value.id);
-                      },
-                      child: Text(
-                        images.isEmpty
-                            ? 'Add Completion Photo'
-                            : 'Add more Photos',
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const Text(
-                      'Feedback',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    if (jobOrder.value.feedback.isNotEmpty)
-                      const Row(
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          Text('Feedback already provided',
-                              style: TextStyle(
-                                fontSize: 14,
-                              )),
-                          Icon(
-                            Icons.feedback,
-                            color: Colors.green,
-                          )
-                        ],
-                      ),
-                    const SizedBox(height: 16),
-                    const SizedBox(height: 16),
-                    TextField(
-                      maxLines: 3,
-                      enabled: jobOrder.value.feedback.isEmpty,
-                      controller: feedbackController,
-                      style: const TextStyle(
-                        fontSize: 16.0,
-                        color: Colors.black87,
-                      ),
-                      decoration: InputDecoration(
-                        hintText: 'Enter your feedback...',
-                        hintStyle: TextStyle(
-                          color: Colors.grey[400],
-                        ),
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                            color: Colors.blueAccent,
-                            width: 2.0,
+                            focusedBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: const BorderSide(
+                                width: 1.5,
+                              ),
+                            ),
+                            enabledBorder: OutlineInputBorder(
+                              borderRadius: BorderRadius.circular(10.0),
+                              borderSide: BorderSide(
+                                color: Colors.grey[400]!,
+                                width: 1.0,
+                              ),
+                            ),
+                            filled: true,
+                            fillColor: const Color.fromARGB(255, 250, 249, 249),
+                            contentPadding: const EdgeInsets.all(12.0),
                           ),
                         ),
-                        focusedBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: const BorderSide(
-                            width: 1.5,
+                        const SizedBox(height: 16),
+                        const SizedBox(height: 20),
+                        if (jobOrder.feedback.isEmpty)
+                          ElevatedButton(
+                              onPressed: () => {
+                                    if (feedbackController.text.isNotEmpty)
+                                      jobOrderController.addFeedback(
+                                          jobOrder.id,
+                                          authController.token,
+                                          feedbackController.text,
+                                          jobOrder),
+                                  },
+                              style: ElevatedButton.styleFrom(
+                                  backgroundColor:
+                                      const Color.fromARGB(255, 255, 238, 1)
+                                          .withOpacity(0.8)),
+                              child: const Text('Send Feedback')),
+                        const Text(
+                          'Comments',
+                          style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.bold,
                           ),
                         ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide(
-                            color: Colors.grey[400]!,
-                            width: 1.0,
-                          ),
-                        ),
-                        filled: true,
-                        fillColor: const Color.fromARGB(255, 250, 249, 249),
-                        contentPadding: const EdgeInsets.all(12.0),
-                      ),
-                    ),
-                    const SizedBox(height: 16),
-                    const SizedBox(height: 20),
-                    if (jobOrder.value.feedback.isEmpty)
-                      ElevatedButton(
-                          onPressed: () => {
-                                if (feedbackController.text.isNotEmpty)
-                                  jobOrderController.addFeedback(
-                                      jobOrder.value.id,
-                                      authController.token,
-                                      feedbackController.text,
-                                      jobOrder.value),
-                              },
-                          style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  const Color.fromARGB(255, 255, 238, 1)
-                                      .withOpacity(0.8)),
-                          child: const Text('Send Feedback')),
-                    const Text(
-                      'Comments',
-                      style: TextStyle(
-                        fontSize: 18,
-                        fontWeight: FontWeight.bold,
-                      ),
-                    ),
-                    const SizedBox(height: 12),
-                    if (jobOrder.value.feedback.isNotEmpty)
-                      TextField(
-                        controller: commentController,
-                        style: const TextStyle(
-                          fontSize: 16.0,
-                          color: Colors.black87,
-                        ),
-                        decoration: InputDecoration(
-                          prefixIcon: Icon(
-                            Icons.chat_bubble_outline,
-                            color: Colors.grey[400],
-                          ),
-                          hintText: 'Comment here...',
-                          hintStyle: TextStyle(
-                            color: Colors.grey[400],
-                          ),
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: const BorderSide(
-                              color: Colors.blueAccent,
-                              width: 2.0,
+                        const SizedBox(height: 12),
+                        if (jobOrder.feedback.isNotEmpty)
+                          TextField(
+                            controller: commentController,
+                            style: const TextStyle(
+                              fontSize: 16.0,
+                              color: Colors.black87,
+                            ),
+                            decoration: InputDecoration(
+                              prefixIcon: Icon(
+                                Icons.chat_bubble_outline,
+                                color: Colors.grey[400],
+                              ),
+                              hintText: 'Comment here...',
+                              hintStyle: TextStyle(
+                                color: Colors.grey[400],
+                              ),
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: const BorderSide(
+                                  color: Colors.blueAccent,
+                                  width: 2.0,
+                                ),
+                              ),
+                              focusedBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: const BorderSide(
+                                  width: 1.5,
+                                ),
+                              ),
+                              enabledBorder: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide(
+                                  color: Colors.grey[400]!,
+                                  width: 1.0,
+                                ),
+                              ),
+                              filled: true,
+                              fillColor:
+                                  const Color.fromARGB(255, 250, 249, 249),
+                              contentPadding: const EdgeInsets.all(12.0),
                             ),
                           ),
-                          focusedBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: const BorderSide(
-                              width: 1.5,
-                            ),
-                          ),
-                          enabledBorder: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide(
-                              color: Colors.grey[400]!,
-                              width: 1.0,
-                            ),
-                          ),
-                          filled: true,
-                          fillColor: const Color.fromARGB(255, 250, 249, 249),
-                          contentPadding: const EdgeInsets.all(12.0),
-                        ),
-                      ),
-                    if (jobOrder.value.comments.isNotEmpty)
-                      SingleChildScrollView(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            const SizedBox(height: 8),
-                            ...jobOrder.value.comments.map((comment) => Padding(
+                        if (jobOrder.comments.isNotEmpty)
+                          SizedBox(
+                            height: 300,
+                            child: ListView.builder(
+                              // shrinkWrap: true,
+                              itemCount: jobOrder.comments.length,
+                              itemBuilder: (context, index) {
+                                return Padding(
                                   padding:
                                       const EdgeInsets.symmetric(vertical: 4.0),
                                   child: Container(
@@ -302,51 +307,52 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                                       borderRadius: BorderRadius.circular(8),
                                     ),
                                     child: Text(
-                                      comment.body,
+                                      jobOrder.comments[index].body,
                                       style: const TextStyle(
                                         fontSize: 16,
                                         color: Colors.black,
                                       ),
                                     ),
                                   ),
-                                )),
-                          ],
-                        ),
-                      ),
-                    if (jobOrderController
-                        .selectedJobOrder.value!.feedback.isNotEmpty)
-                      Column(children: [
-                        const SizedBox(height: 16),
-                        ElevatedButton(
-                          onPressed: () async {
-                            if (commentController.text.isNotEmpty) {
-                              dynamic res = await jobOrderController.addComment(
-                                  jobOrder.value.id,
-                                  authController.token,
-                                  commentController.text,
-                                  jobOrder.value);
-                              if (res != false) {
-                                setState(() {
-                                  commentController.text = '';
-                                  jobOrder.value.comments
-                                      .insert(0, JobOrderComment.fromJson(res));
-                                });
-                              }
-                            }
-                          },
-                          style: ElevatedButton.styleFrom(
-                            backgroundColor:
-                                const Color.fromARGB(255, 159, 228, 193)
-                                    .withOpacity(0.8),
+                                );
+                              },
+                            ),
                           ),
-                          child: const Text('Add Comment'),
-                        ),
-                        const SizedBox(height: 16)
+                        if (jobOrderController
+                            .selectedJobOrder.value!.feedback.isNotEmpty)
+                          Column(children: [
+                            const SizedBox(height: 16),
+                            ElevatedButton(
+                              onPressed: () async {
+                                if (commentController.text.isNotEmpty) {
+                                  dynamic res =
+                                      await jobOrderController.addComment(
+                                          jobOrder.id,
+                                          authController.token,
+                                          commentController.text,
+                                          jobOrder);
+                                  // if (res != false) {
+                                  //   setState(() {
+                                  //     commentController.text = '';
+                                  //     jobOrder.comments
+                                  //         .insert(0, JobOrderComment.fromJson(res));
+                                  //   });
+                                  // }
+                                }
+                              },
+                              style: ElevatedButton.styleFrom(
+                                backgroundColor:
+                                    const Color.fromARGB(255, 159, 228, 193)
+                                        .withOpacity(0.8),
+                              ),
+                              child: const Text('Add Comment'),
+                            ),
+                            const SizedBox(height: 16)
+                          ])
                       ])
-                  ])
-                ],
-              );
-            })),
+                    ],
+                  );
+                })),
       ),
     );
   }
