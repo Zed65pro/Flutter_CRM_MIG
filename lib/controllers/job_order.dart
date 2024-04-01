@@ -2,6 +2,7 @@ import 'package:crm/api_services/job_order_api_services.dart';
 import 'package:crm/components/dialogs/dialogs.dart';
 import 'package:crm/controllers/auth.dart';
 import 'package:crm/models/job_order.dart';
+import 'package:crm/models/job_order_comment.dart';
 import 'package:crm/models/job_order_image.dart';
 import 'package:crm/models/point.dart';
 import 'package:flutter/material.dart';
@@ -14,6 +15,7 @@ class JobOrderController extends GetxController {
   final RxInt _count = 0.obs;
   final RxInt _pageSize = 6.obs; // Number of items per page
   final TextEditingController query = TextEditingController();
+  final RxList filterList = [].obs;
   final AuthController authController = Get.find();
   final Rx<JobOrder?> selectedJobOrder = Rx<JobOrder?>(null);
 
@@ -36,7 +38,7 @@ class JobOrderController extends GetxController {
     isLoading = true;
     try {
       final results = await fetchJobOrdersApi(
-          authController.token, query.text, currentPage, pageSize);
+          authController.token, query.text, currentPage, pageSize, filterList);
 
       if (results != null) {
         if (results[0].isEmpty) {
@@ -92,6 +94,8 @@ class JobOrderController extends GetxController {
               selectedJobOrder.value?.location = value as Point;
             case 'images':
               selectedJobOrder.value?.images.add(value as JobOrderImage);
+            case 'comments':
+              selectedJobOrder.value?.comments.add(value as JobOrderComment);
             default:
               throw Exception('Invalid field name: $key');
           }
@@ -141,6 +145,8 @@ class JobOrderController extends GetxController {
               jobOrders[jobOrderIndex].location = value as Point;
             case 'images':
               jobOrders[jobOrderIndex].images.add(value as JobOrderImage);
+            case 'comments':
+              selectedJobOrder.value?.comments.add(value as JobOrderComment);
             default:
               throw Exception('Invalid field name: $key');
           }
@@ -157,4 +163,95 @@ class JobOrderController extends GetxController {
   Future<void> addJobOrder(JobOrder jobOrder) async {
     jobOrders.add(jobOrder);
   }
+
+  Future<dynamic> addComment(
+      int jobId, String token, String body, JobOrder jobOrder) async {
+    final result =
+        await addJobOrderComment(jobId: jobId, body: body, token: token);
+    if (result != false) {
+      return result;
+      // List<JobOrderComment> copiedList =
+      //     List<JobOrderComment>.from(jobOrder.comments);
+      // copiedList.insert(0, JobOrderComment.fromJson(result));
+      // selectedJobOrder.value?.comments = copiedList;
+      // updatedJobOrder.comments
+      // updateFields(jobId, {'comments': JobOrderComment.fromJson(result)});
+      // updateFieldsSelectedJob({'comments': JobOrderComment.fromJson(result)});
+    }
+  }
+
+  Future<void> addFeedback(
+      int jobId, String token, String feedback, JobOrder jobOrder) async {
+    JobOrder updatedJobOrder = jobOrder.copy();
+    updatedJobOrder.feedback = feedback;
+
+    final result = await updateJobOrder(
+        jobId: jobId, token: token, updatedJobOrder: updatedJobOrder);
+    print(result);
+
+    if (result != false) {
+      updateFields(jobId, {'feedback': result['feedback']});
+      updateFieldsSelectedJob({'feedback': result['feedback']});
+    }
+  }
+
+  // Future<void> addUpdateFieldFromView(
+  //   int jobId,
+  //   String token,
+  //   Map<String, dynamic> fieldsToUpdate,
+  //   JobOrder jobOrder,
+  // ) async {
+  //   // Create a copy of the original jobOrder
+  //   JobOrder updatedJobOrder = jobOrder.copy();
+
+  //   // Update fields in the updatedJobOrder
+  //   fieldsToUpdate.forEach((key, value) {
+  //     switch (key) {
+  //       case 'name':
+  //         updatedJobOrder.name = value as String;
+  //         break;
+  //       case 'description':
+  //         updatedJobOrder.description = value as String;
+  //         break;
+  //       case 'area':
+  //         updatedJobOrder.area = value as String;
+  //         break;
+  //       case 'city':
+  //         updatedJobOrder.city = value as String;
+  //         break;
+  //       case 'street':
+  //         updatedJobOrder.street = value as String;
+  //         break;
+  //       case 'phoneNumber':
+  //         updatedJobOrder.phoneNumber = value as String;
+  //         break;
+  //       case 'email':
+  //         updatedJobOrder.email = value as String;
+  //         break;
+  //       case 'location':
+  //         updatedJobOrder.location = value as Point;
+  //         break;
+  //       case 'feedback':
+  //         updatedJobOrder.feedback = value as String;
+  //         break;
+  //       case 'status':
+  //         updatedJobOrder.status = value as String;
+  //         break;
+  //       // Add cases for other fields if needed
+  //       default:
+  //         // Handle unknown fields or ignore them
+  //         print('Unknown field: $key');
+  //         break;
+  //     }
+  //   });
+
+  //   // Call the method to update the job order with the updated fields
+  //   final result = await updateJobOrder(
+  //     jobId: jobId,
+  //     token: token,
+  //     updatedJobOrder: updatedJobOrder,
+  //   );
+
+  //   print(result);
+  // }
 }

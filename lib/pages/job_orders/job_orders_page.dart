@@ -2,7 +2,7 @@ import 'package:crm/controllers/job_order.dart';
 import 'package:crm/components/appbar/home_appbar.dart';
 import 'package:crm/pages/job_orders/components/job_order_card.dart';
 import 'package:flutter/material.dart';
-import 'package:crm/pages/job_orders/components/search_bar.dart';
+import 'package:crm/pages/job_orders/components/job_search_bar.dart';
 import 'package:get/get.dart';
 
 class JobOrderPage extends StatefulWidget {
@@ -145,8 +145,8 @@ class _JobOrderPageState extends State<JobOrderPage> {
     jobOrderController.fetchJobOrders();
   }
 
-  void onFilterPressed() {
-    // Simulate filter functionality
-    // print('Filter pressed');
+  void onFilterPressed(List<String> filterList) {
+    jobOrderController.filterList.assignAll(filterList);
+    jobOrderController.fetchJobOrders();
   }
 }

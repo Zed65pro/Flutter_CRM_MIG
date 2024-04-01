@@ -1,7 +1,6 @@
 // routes.dart
 import 'package:crm/pages/job_order_details/components/job_details_camera.dart';
 import 'package:crm/pages/job_order_details/job_order_details_page.dart';
-import 'package:crm/pages/job_orders/components/job_camera.dart';
 import 'package:crm/pages/create_customer/create_customer.dart';
 import 'package:crm/pages/create_service/create_service.dart';
 import 'package:crm/pages/customer_details/customer_details.dart';
@@ -12,7 +11,6 @@ import 'package:crm/pages/home_page/home_page.dart';
 import 'package:crm/middlewares/auth.dart';
 import 'package:crm/pages/job_orders/job_orders_page.dart';
 import 'package:crm/pages/login_page/login_page.dart';
-import 'package:crm/pages/map/direction_map.dart';
 import 'package:crm/pages/map/fullscreen_job_order_map.dart';
 import 'package:crm/pages/service_details/service_details.dart';
 import 'package:crm/pages/services/services_page.dart';

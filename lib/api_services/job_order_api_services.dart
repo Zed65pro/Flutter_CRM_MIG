@@ -57,58 +57,47 @@ Future<bool> createJobOrder(
   return false;
 }
 
-Future<bool> updateJobOrder({
-  required String jobId,
-  required String name,
-  required String description,
-  required String area,
-  required String city,
-  required String street,
-  required String phoneNumber,
-  required String email,
-  required String token,
-  Point? location,
-  String? status,
-  String? feedback,
+Future<dynamic> updateJobOrder({
+  required int jobId,
+  String? token,
+  required JobOrder updatedJobOrder,
 }) async {
   try {
+    if (token == null) {
+      throw Exception('Token is required for authorization.');
+    }
+
     Uri url = Uri.parse('${dotenv.env['API_BASE_URL']}joborders/$jobId/');
     String authToken = 'Token $token';
-    Map<String, dynamic> body = {
-      'name': name,
-      'description': description,
-      'area': area,
-      'city': city,
-      'street': street,
-      'phone_number': phoneNumber,
-      'email': email,
-    };
-    if (status != null) body['status'] = status;
-    if (feedback != null) body['feedback'] = feedback;
-    if (location != null) body['location'] = location.toJson();
 
     final response = await http
         .put(
-      url,
-      headers: {'Authorization': authToken},
-      body: jsonEncode(body),
-    )
-        .timeout(const Duration(seconds: DEFAULT_TIMEOUT_SECONDS),
-            onTimeout: () {
-      return http.Response('Error', 408);
-    });
+          url,
+          headers: {
+            'Authorization': authToken,
+            'Content-Type': 'application/json',
+          },
+          body: json.encode(updatedJobOrder.toUpdateJson()),
+        )
+        .timeout(
+          const Duration(seconds: DEFAULT_TIMEOUT_SECONDS),
+          onTimeout: () => http.Response('Error', 408),
+        );
     if (response.statusCode == 200) {
-      return true;
+      return json.decode(response.body);
     } else if (response.statusCode == 408) {
-      showErrorSnackbar('Request timed out. Please try again.');
+      // Handle timeout error
+      throw Exception('Request timed out. Please try again.');
     } else {
-      showErrorSnackbar('Failed to update job order: ${response.statusCode}');
+      // Handle other errors
+      throw Exception('Failed to update job order: ${response.statusCode}');
     }
   } on SocketException {
-    showFailureDialog('No internet connection or server not reachable.');
+    throw Exception('No internet connection or server not reachable.');
   } catch (e) {
     print("Error occurred: $e");
-    showErrorSnackbar('Failed to update job order. Please try again.');
+    showFailureDialog('$e');
+    // throw Exception('Failed to update job order. Please try again.');
   }
   return false;
 }
@@ -178,10 +167,48 @@ Future<dynamic> addJobOrderImage({
   return false;
 }
 
-Future<dynamic> fetchJobOrdersApi(
-    String token, String search, int currentPage, int pageSize) async {
+Future<dynamic> addJobOrderComment({
+  required int jobId,
+  required String body,
+  required String token,
+}) async {
   try {
-    print(token);
+    Uri url =
+        Uri.parse('${dotenv.env['API_BASE_URL']}joborders/comment/$jobId/');
+    String authToken = 'Token $token';
+    print(body);
+    final response = await http.post(
+      url,
+      headers: {
+        'Authorization': authToken,
+      },
+      body: {'body': body},
+    ).timeout(const Duration(seconds: DEFAULT_TIMEOUT_SECONDS), onTimeout: () {
+      return http.Response('Error', 408);
+    });
+
+    print(json.decode(response.body));
+    if (response.statusCode == 201) {
+      return json.decode(response.body);
+    } else if (response.statusCode == 408) {
+      showErrorSnackbar('Request timed out. Please try again.');
+    } else {
+      showErrorSnackbar(
+          'Failed to Comment to job order: ${response.statusCode}');
+    }
+  } on SocketException {
+    showFailureDialog('No internet connection or server not reachable.');
+  } catch (e) {
+    print("Error occurred: $e");
+    showErrorSnackbar('Failed to add image to job order. Please try again.');
+  }
+  return false;
+}
+
+Future<dynamic> fetchJobOrdersApi(String token, String search, int currentPage,
+    int pageSize, List<dynamic> filterList) async {
+  try {
+    String filterJson = json.encode(filterList);
     Uri url = Uri.parse(
         '${dotenv.env['API_BASE_URL']}joborders/?search=$search&page=$currentPage&pageSize=$pageSize/');
     String authToken = 'Token $token';
@@ -189,12 +216,11 @@ Future<dynamic> fetchJobOrdersApi(
       currentPage = 1;
     }
     final response = await http.get(
-      url,
+      url.replace(queryParameters: {'filters': filterJson}),
       headers: {'Authorization': authToken},
     ).timeout(const Duration(seconds: 3), onTimeout: () {
       return http.Response('Error', 408);
     });
-
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       final List<dynamic> results = responseData['results'];
@@ -210,6 +236,5 @@ Future<dynamic> fetchJobOrdersApi(
     showFailureDialog('No internet connection or server is unreachable');
   } catch (e) {
     print('Error fetching job orders: $e');
-    rethrow; // Rethrow the error to be caught by the FutureBuilder
   }
 }

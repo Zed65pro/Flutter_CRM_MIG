@@ -26,8 +26,8 @@ class JobOrderImage {
     return {
       'id': id,
       'file': file,
-      'createdAt': createdAt.toIso8601String(),
-      'uploadedBy': uploadedBy.toJson(),
+      'created_at': createdAt.toIso8601String(),
+      'uploaded_by': uploadedBy.toJson(),
     };
   }
 }
