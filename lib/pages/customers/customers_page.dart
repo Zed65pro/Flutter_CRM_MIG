@@ -11,6 +11,7 @@ import 'package:flutter/material.dart';
 import 'package:crm/pages/customers/components/search_bar.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 import 'package:http/http.dart' as http;
 
 class CustomersPage extends StatefulWidget {
@@ -83,7 +84,13 @@ class _CustomerPageState extends State<CustomersPage> {
                       );
                     }
                   }),
-                  _buildPaginationControls(),
+                  Obx(() {
+                    if (customers.isNotEmpty) {
+                      return _buildPaginationControls();
+                    } else {
+                      return const SizedBox(height: 5);
+                    }
+                  }),
                 ],
               ),
             ),

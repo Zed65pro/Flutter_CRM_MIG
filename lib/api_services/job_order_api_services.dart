@@ -150,29 +150,6 @@ Future<dynamic> addJobOrderImage({
     Uri url = Uri.parse('${dotenv.env['API_BASE_URL']}joborders/image/$jobId/');
     String authToken = 'Token $token';
 
-    // Read the image file
-    // File imageFile = File(imagePath);
-    // List<int> imageBytes = await imageFile.readAsBytes();
-    // String base64Image = base64Encode(imageBytes);
-
-    // Map<String, dynamic> body = {
-    //   'file': base64Image,
-    // };
-
-    // final response = await http
-    //     .post(
-    //   url,
-    //   headers: {
-    //     'Authorization': authToken,
-    //     // 'Content-Type': 'application/json',
-    //   },
-    //   body: jsonEncode(body),
-    // )
-    //     .timeout(const Duration(seconds: DEFAULT_TIMEOUT_SECONDS),
-    //         onTimeout: () {
-    //   return http.Response('Error', 408);
-    // });
-    // Create a multipart request
     var request = http.MultipartRequest('POST', url);
     request.headers['Authorization'] = authToken;
     // Attach the image file
@@ -183,7 +160,7 @@ Future<dynamic> addJobOrderImage({
     // Handle the response
     var response = await http.Response.fromStream(streamedResponse);
 
-    print(json.decode(response.body));
+    // print(json.decode(response.body));
     if (response.statusCode == 201) {
       return json.decode(response.body);
     } else if (response.statusCode == 408) {
@@ -221,10 +198,8 @@ Future<dynamic> fetchJobOrdersApi(
     if (response.statusCode == 200) {
       final Map<String, dynamic> responseData = json.decode(response.body);
       final List<dynamic> results = responseData['results'];
-      // print(results);
       final List<JobOrder> jobOrderList =
           results.map((json) => JobOrder.fromJson(json)).toList();
-      // print(results);
       return [jobOrderList, responseData['count'], currentPage];
     } else if (response.statusCode == 408) {
       showFailureDialog('Request timed out. Please try again later');

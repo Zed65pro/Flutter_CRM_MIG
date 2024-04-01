@@ -1,5 +1,4 @@
-import 'dart:io';
-
+import 'package:crm/controllers/job_order.dart';
 import 'package:crm/controllers/job_photo.dart';
 import 'package:crm/models/job_order.dart';
 import 'package:crm/models/job_order_image.dart';
@@ -10,6 +9,7 @@ import 'package:crm/components/appbar/home_appbar.dart';
 import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:get/get_state_manager/get_state_manager.dart';
 
 class JobOrderDetails extends StatefulWidget {
   const JobOrderDetails({super.key});
@@ -23,26 +23,23 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
   late RxList<JobOrderImage> images;
   late JobOrder jobOrder;
   final JobPhotoController jobPhotoController = Get.put(JobPhotoController());
+  final JobOrderController jobOrderController = Get.find();
 
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
-    jobOrder = ModalRoute.of(context)!.settings.arguments as JobOrder;
+    jobOrder = jobOrderController.selectedJobOrder.value!;
     images = jobOrder.images.obs;
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // Set a light background color
-      // resizeToAvoidBottomInset: true,
-      appBar: HomeAppBar(title: 'Job Order Details'),
+      appBar: HomeAppBar(),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.all(16.0),
+          padding: const EdgeInsets.all(8.0),
           child: Column(
-            // crossAxisAlignment: CrossAxisAlignment.start,
-            // mainAxisSize: MainAxisSize.max,
             children: [
               JobOrderCardDetails(jobOrder: jobOrder),
               const SizedBox(height: 16),
@@ -63,45 +60,7 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                       IconButton(
                         icon: const Icon(Icons.edit,
                             color: Color.fromARGB(255, 54, 143, 215)),
-                        onPressed: () {
-                          // Add your edit logic here
-                          // Get.toNamed(RoutesUrls.updateCustomer,
-                          //     arguments: customer);
-                        },
-                      ),
-                      IconButton(
-                        icon: const Icon(Icons.delete,
-                            color: Color.fromARGB(255, 186, 36, 36)),
-                        onPressed: () async {
-                          Get.defaultDialog(
-                            title: 'Delete customer',
-                            content: const Padding(
-                              padding: EdgeInsets.all(8.0),
-                              child: Text(
-                                'Are you sure you want to delete this customer?',
-                                textAlign: TextAlign.center,
-                              ),
-                            ),
-                            textConfirm: 'OK',
-                            onConfirm: () async {
-                              // Add logic to add a service to a customer
-                              // bool result = await handleDeleteCustomer(
-                              //     authController.token, customer.id);
-
-                              // if (result) {
-                              //   Get.offNamedUntil(
-                              //       RoutesUrls.customersPage,
-                              //       (route) =>
-                              //           route.settings.name ==
-                              //           RoutesUrls.homePage);
-                              // } else {}
-                            },
-                            textCancel: 'Cancel', // Add a cancel button
-                            onCancel: () {
-                              // Get.back(); // Close the dialog without adding the service
-                            },
-                          );
-                        },
+                        onPressed: () {},
                       ),
                     ],
                   ),
@@ -164,9 +123,17 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                           width: Get.width / 1.5, // Adjust as needed
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(10.0),
-                            image: DecorationImage(
+                          ),
+                          child: ClipRRect(
+                            borderRadius: BorderRadius.circular(10.0),
+                            child: FadeInImage(
+                              placeholder:
+                                  const AssetImage('assets/images/loading.gif'),
                               image: NetworkImage(images[index].file),
                               fit: BoxFit.cover,
+                              fadeInDuration: const Duration(milliseconds: 300),
+                              fadeOutDuration:
+                                  const Duration(milliseconds: 300),
                             ),
                           ),
                         );
@@ -175,10 +142,9 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                   );
                 }
               }),
-              const SizedBox(height: 20),
+              const SizedBox(height: 16),
               ElevatedButton(
                 onPressed: () {
-                  // print(images.map((e) => e.toJson()));
                   Get.toNamed(RoutesUrls.jobCamera, arguments: jobOrder.id);
                 },
                 child: Text(
@@ -233,7 +199,7 @@ class _JobOrderDetailsState extends State<JobOrderDetails> {
                 ),
               ),
               const SizedBox(height: 20),
-              Row(mainAxisAlignment: MainAxisAlignment.end, children: [
+              Row(mainAxisAlignment: MainAxisAlignment.center, children: [
                 ElevatedButton(
                     onPressed: () => {},
                     style: ElevatedButton.styleFrom(

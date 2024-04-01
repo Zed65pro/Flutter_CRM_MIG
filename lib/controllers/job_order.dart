@@ -15,6 +15,7 @@ class JobOrderController extends GetxController {
   final RxInt _pageSize = 6.obs; // Number of items per page
   final TextEditingController query = TextEditingController();
   final AuthController authController = Get.find();
+  final Rx<JobOrder?> selectedJobOrder = Rx<JobOrder?>(null);
 
   bool get isLoading => _isLoading.value;
   set isLoading(bool val) => _isLoading.value = val;
@@ -36,6 +37,7 @@ class JobOrderController extends GetxController {
     try {
       final results = await fetchJobOrdersApi(
           authController.token, query.text, currentPage, pageSize);
+
       if (results != null) {
         if (results[0].isEmpty) {
           jobOrders.clear();
@@ -50,6 +52,55 @@ class JobOrderController extends GetxController {
       print("error $e");
     } finally {
       isLoading = false;
+    }
+  }
+
+  Future<void> updateFieldsSelectedJob(
+      Map<String, dynamic> fieldsToUpdate) async {
+    try {
+      if (selectedJobOrder != null) {
+        fieldsToUpdate.forEach((key, value) {
+          switch (key) {
+            case 'name':
+              selectedJobOrder.value?.name = value as String;
+              break;
+            case 'description':
+              selectedJobOrder.value?.description = value as String;
+              break;
+            case 'area':
+              selectedJobOrder.value?.area = value as String;
+              break;
+            case 'city':
+              selectedJobOrder.value?.city = value as String;
+              break;
+            case 'street':
+              selectedJobOrder.value?.street = value as String;
+              break;
+            case 'phone_number':
+              selectedJobOrder.value?.phoneNumber = value as String;
+              break;
+            case 'email':
+              selectedJobOrder.value?.email = value as String;
+              break;
+            case 'feedback':
+              selectedJobOrder.value?.feedback = value as String;
+              break;
+            case 'status':
+              selectedJobOrder.value?.status = value as String;
+              break;
+            case 'location':
+              selectedJobOrder.value?.location = value as Point;
+            case 'images':
+              selectedJobOrder.value?.images.add(value as JobOrderImage);
+            default:
+              throw Exception('Invalid field name: $key');
+          }
+        });
+      } else {
+        throw Exception('big faillll');
+      }
+    } catch (e) {
+      print(e);
     }
   }
 
@@ -89,7 +140,6 @@ class JobOrderController extends GetxController {
             case 'location':
               jobOrders[jobOrderIndex].location = value as Point;
             case 'images':
-              print("added");
               jobOrders[jobOrderIndex].images.add(value as JobOrderImage);
             default:
               throw Exception('Invalid field name: $key');
@@ -99,7 +149,8 @@ class JobOrderController extends GetxController {
         throw Exception('Job order with ID $id not found');
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to update fields: $e');
+      print(e);
+      // Get.snackbar('Error', 'Failed to update fields: $e');
     }
   }
 

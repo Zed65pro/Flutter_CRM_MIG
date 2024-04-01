@@ -1,6 +1,5 @@
 import 'package:crm/models/job_order.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 
 class JobOrderCardDetails extends StatelessWidget {
   const JobOrderCardDetails({

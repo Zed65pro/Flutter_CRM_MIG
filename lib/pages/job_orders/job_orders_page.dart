@@ -22,7 +22,7 @@ class _JobOrderPageState extends State<JobOrderPage> {
     final jobOrders = jobOrderController.jobOrders;
 
     return Scaffold(
-      appBar: HomeAppBar(title: 'Job Orders'),
+      appBar: HomeAppBar(),
       body: RefreshIndicator(
         onRefresh: jobOrderController.fetchJobOrders,
         child: ListView(
@@ -74,43 +74,52 @@ class _JobOrderPageState extends State<JobOrderPage> {
   }
 
   Widget _buildPaginationControls() {
-    final count = jobOrderController.count;
-    final currentPage = jobOrderController.currentPage;
-    final pageSize = jobOrderController.pageSize;
-    int totalPages = (count / pageSize).ceil();
-    return SingleChildScrollView(
-      scrollDirection: Axis.horizontal,
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 16.0),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            ElevatedButton(
-              onPressed: currentPage > 1 ? () => goToPage(1) : null,
-              child: const Text('<<'),
+    return Obx(() {
+      final count = jobOrderController.count;
+      final currentPage = jobOrderController.currentPage;
+      final pageSize = jobOrderController.pageSize;
+      int totalPages = (count / pageSize).ceil();
+
+      if (totalPages > 0) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 16.0),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                ElevatedButton(
+                  onPressed: currentPage > 1 ? () => goToPage(1) : null,
+                  child: const Text('<<'),
+                ),
+                const SizedBox(width: 8.0),
+                ElevatedButton(
+                  onPressed: currentPage > 1 ? () => changePage(-1) : null,
+                  child: const Text('<'),
+                ),
+                const SizedBox(width: 8.0),
+                Text('Page $currentPage of $totalPages'),
+                const SizedBox(width: 8.0),
+                ElevatedButton(
+                  onPressed:
+                      currentPage < totalPages ? () => changePage(1) : null,
+                  child: const Text('>'),
+                ),
+                const SizedBox(width: 8.0),
+                ElevatedButton(
+                  onPressed: currentPage < totalPages
+                      ? () => goToPage(totalPages)
+                      : null,
+                  child: const Text('>>'),
+                ),
+              ],
             ),
-            const SizedBox(width: 8.0),
-            ElevatedButton(
-              onPressed: currentPage > 1 ? () => changePage(-1) : null,
-              child: const Text('<'),
-            ),
-            const SizedBox(width: 8.0),
-            Text('Page $currentPage of $totalPages'),
-            const SizedBox(width: 8.0),
-            ElevatedButton(
-              onPressed: currentPage < totalPages ? () => changePage(1) : null,
-              child: const Text('>'),
-            ),
-            const SizedBox(width: 8.0),
-            ElevatedButton(
-              onPressed:
-                  currentPage < totalPages ? () => goToPage(totalPages) : null,
-              child: const Text('>>'),
-            ),
-          ],
-        ),
-      ),
-    );
+          ),
+        );
+      } else {
+        return SizedBox(height: 1);
+      }
+    });
   }
 
   void goToPage(int page) {

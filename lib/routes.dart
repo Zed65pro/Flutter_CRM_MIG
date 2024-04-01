@@ -13,6 +13,7 @@ import 'package:crm/middlewares/auth.dart';
 import 'package:crm/pages/job_orders/job_orders_page.dart';
 import 'package:crm/pages/login_page/login_page.dart';
 import 'package:crm/pages/map/direction_map.dart';
+import 'package:crm/pages/map/fullscreen_job_order_map.dart';
 import 'package:crm/pages/service_details/service_details.dart';
 import 'package:crm/pages/services/services_page.dart';
 import 'package:crm/splash_screen.dart';
@@ -88,7 +89,7 @@ class AppRoutes {
     GetPage(
       //Customer create page
       name: RoutesUrls.displayMap,
-      page: () => const DirectionMap(),
+      page: () => const FullScreenJobMap(),
       middlewares: [AuthMiddleware()],
     ),
     GetPage(

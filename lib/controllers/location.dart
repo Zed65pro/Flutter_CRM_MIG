@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:latlong2/latlong.dart';
@@ -36,11 +37,10 @@ class LocationController extends GetxController {
       if (savedLatitude != null && savedLongitude != null && !load) {
         userLocation.value = LatLng(savedLatitude, savedLongitude);
       } else {
-        print('asdas');
+        await _requestLocationPermission();
         Position position = await Geolocator.getCurrentPosition(
-          desiredAccuracy: LocationAccuracy.medium, // Adjust accuracy level
-          timeLimit:
-              const Duration(seconds: 5), // Limit the time to retrieve location
+          desiredAccuracy: LocationAccuracy.medium,
+          timeLimit: const Duration(seconds: 5),
         );
         userLocation.value = LatLng(position.latitude, position.longitude);
         // Save location to shared preferences
@@ -50,6 +50,15 @@ class LocationController extends GetxController {
       print('Error getting current location: $e');
     } finally {
       _loading.value = false;
+    }
+  }
+
+  Future<void> _requestLocationPermission() async {
+    final PermissionStatus status = await Permission.location.request();
+    if (status != PermissionStatus.granted) {
+      print('Location permission denied');
+    } else {
+      print('Location permission granted');
     }
   }
 
@@ -74,47 +83,3 @@ class LocationController extends GetxController {
   // Getter for loading state
   RxBool get loading => _loading;
 }
-// import 'package:get/get.dart';
-// import 'package:shared_preferences/shared_preferences.dart';
-// import 'package:geolocator/geolocator.dart';
-// import 'package:latlong2/latlong.dart';
-
-// class LocationController extends GetxController with StateMixin {
-//   Rx<LatLng?> userLocation = Rx<LatLng?>(null);
-
-//   @override
-//   void onInit() {
-//     super.onInit();
-//     fetchLocation().then((value) {
-//       change(null, status: RxStatus.success());
-//     });
-//   }
-
-//   Future<void> fetchLocation() async {
-//     try {
-//       Position position = await Geolocator.getCurrentPosition(
-//         desiredAccuracy: LocationAccuracy.high,
-//       );
-//       userLocation.value = LatLng(position.latitude, position.longitude);
-//       // Save location to shared preferences
-//       saveLocationToSharedPreferences(userLocation.value!);
-//     } catch (e) {
-//       print('Error getting current location: $e');
-//     }
-//   }
-
-//   Future<void> saveLocationToSharedPreferences(LatLng location) async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     await prefs.setDouble('latitude', location.latitude);
-//     await prefs.setDouble('longitude', location.longitude);
-//   }
-
-//   Future<void> removeLocationFromSharedPreferences() async {
-//     SharedPreferences prefs = await SharedPreferences.getInstance();
-//     await prefs.remove('latitude');
-//     await prefs.remove('longitude');
-//   }
-// }
-
-
-

@@ -1,3 +1,4 @@
+import 'package:crm/controllers/job_order.dart';
 import 'package:crm/models/job_order.dart';
 import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
@@ -5,8 +6,8 @@ import 'package:get/get.dart';
 
 class JobOrderCard extends StatelessWidget {
   final JobOrder jobOrder;
-
-  const JobOrderCard({super.key, required this.jobOrder});
+  final JobOrderController jobOrderController = Get.find();
+  JobOrderCard({super.key, required this.jobOrder});
 
   @override
   Widget build(BuildContext context) {
@@ -29,31 +30,9 @@ class JobOrderCard extends StatelessWidget {
             fontSize: 13,
           ),
         ),
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            IconButton(
-              icon: const Icon(Icons.delete,
-                  color: Color.fromARGB(255, 158, 53, 53)),
-              onPressed: () {
-                if (Get.isOverlaysOpen) {
-                  Get.back();
-                }
-                Get.defaultDialog(
-                    title: "Confirm Delete",
-                    content: const Text(
-                        "Are you sure you want to delete this job order?"),
-                    textConfirm: "Delete",
-                    textCancel: "Cancel",
-                    onConfirm: () {
-                      Get.back();
-                    });
-              },
-            ),
-          ],
-        ),
         onTap: () {
-          Get.toNamed(RoutesUrls.jobOrderDetails, arguments: jobOrder);
+          jobOrderController.selectedJobOrder.value = jobOrder;
+          Get.toNamed(RoutesUrls.jobOrderDetails);
         },
       ),
     );

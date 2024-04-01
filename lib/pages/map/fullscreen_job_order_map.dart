@@ -1,8 +1,7 @@
 import 'dart:async';
 
+import 'package:crm/components/appbar/home_appbar.dart';
 import 'package:crm/components/dialogs/dialogs.dart';
-import 'package:crm/controllers/job_order.dart';
-import 'package:crm/settings/routes_urls.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -13,25 +12,28 @@ import 'package:crm/controllers/location.dart';
 import 'package:crm/pages/map/misc/tile_providers.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-class JobMap extends StatefulWidget {
-  const JobMap({super.key, required this.jobLocation});
-  final LatLng jobLocation;
+class FullScreenJobMap extends StatefulWidget {
+  const FullScreenJobMap({super.key});
   @override
-  State<JobMap> createState() => _JobMapState();
+  State<FullScreenJobMap> createState() => _FullScreenJobMapState();
 }
 
-class _JobMapState extends State<JobMap> {
+class _FullScreenJobMapState extends State<FullScreenJobMap> {
   late final LatLng jobLocation;
-  // final LatLng jobLocation = const LatLng(31.886, 35.208);
   List<LatLng> routePoints = [];
   final LocationController locationController = Get.find();
 
   @override
   void initState() {
-    super.initState();
-    jobLocation = widget.jobLocation;
-
     _requestLocationPermission();
+    super.initState();
+  }
+
+  @override
+  void didChangeDependencies() {
+    jobLocation = ModalRoute.of(context)?.settings.arguments as LatLng? ??
+        const LatLng(31.886, 35.208);
+    super.didChangeDependencies();
   }
 
   Future<void> _requestLocationPermission() async {
@@ -50,6 +52,9 @@ class _JobMapState extends State<JobMap> {
   }
 
   Future<void> _calculateRoute(LatLng start, LatLng end) async {
+    if (jobLocation == null) {
+      return;
+    }
     var v1 = start.latitude;
     var v2 = start.longitude;
     var v3 = end.latitude;
@@ -75,17 +80,17 @@ class _JobMapState extends State<JobMap> {
 
   @override
   Widget build(BuildContext context) {
-    return Obx(() {
-      if (!locationController.loading.value &&
-          locationController.userLocation.value != null &&
-          routePoints.isNotEmpty) {
-        return Stack(children: [
-          Padding(
-            padding: const EdgeInsets.all(12.0),
-            child: FlutterMap(
+    return Scaffold(
+      appBar: HomeAppBar(title: 'Location'),
+      body: Obx(() {
+        if (!locationController.loading.value &&
+            locationController.userLocation.value != null &&
+            routePoints.isNotEmpty) {
+          return Stack(children: [
+            FlutterMap(
               options: MapOptions(
                 initialCenter: locationController.userLocation.value!,
-                initialZoom: 15,
+                initialZoom: 16,
                 interactionOptions: const InteractionOptions(
                   flags: ~InteractiveFlag.doubleTapZoom,
                 ),
@@ -128,34 +133,33 @@ class _JobMapState extends State<JobMap> {
                 ),
               ],
             ),
-          ),
-          Positioned(top: 20, right: 20, child: refreshLocationIndicator()),
-          Positioned(top: 20, right: 80, child: fullScreenIndicator())
-        ]);
-      } else if (locationController.loading.value) {
-        return const Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              CircularProgressIndicator(),
-              SizedBox(height: 16),
-              Text('Calculating the route...'),
-            ],
-          ),
-        );
-      } else {
-        return Center(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              const Text('Route information not available.'),
-              const SizedBox(height: 16),
-              refreshLocationIndicator(),
-            ],
-          ),
-        );
-      }
-    });
+            Positioned(top: 20, right: 20, child: refreshLocationIndicator())
+          ]);
+        } else if (locationController.loading.value) {
+          return const Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                CircularProgressIndicator(),
+                SizedBox(height: 16),
+                Text('Calculating the route...'),
+              ],
+            ),
+          );
+        } else {
+          return Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                const Text('Route information not available.'),
+                const SizedBox(height: 16),
+                refreshLocationIndicator(),
+              ],
+            ),
+          );
+        }
+      }),
+    );
   }
 
   Container refreshLocationIndicator() {
@@ -188,42 +192,6 @@ class _JobMapState extends State<JobMap> {
               child: Icon(
                 Icons.refresh,
                 color: Colors.blue,
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Container fullScreenIndicator() {
-    return Container(
-      decoration: BoxDecoration(
-        shape: BoxShape.circle,
-        color: Colors.blue, // Change color to blue
-        boxShadow: [
-          BoxShadow(
-            color: Colors.grey.withOpacity(0.5),
-            spreadRadius: 2,
-            blurRadius: 5,
-            offset: const Offset(0, 3),
-          ),
-        ],
-      ),
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          onTap: () async {
-            Get.toNamed(RoutesUrls.displayMap, arguments: jobLocation);
-          },
-          borderRadius: BorderRadius.circular(25),
-          child: Container(
-            padding: const EdgeInsets.all(12),
-            child: const Tooltip(
-              message: 'Fullscreen',
-              child: Icon(
-                Icons.fullscreen,
-                color: Colors.white,
               ),
             ),
           ),
