@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'package:crm/api_services/customer_api_services.dart';
+import 'package:crm/api/customer_api_services.dart';
 import 'package:crm/pages/customer_details/components/add_service_field.dart';
 import 'package:crm/pages/customer_details/components/customer_details_card.dart';
 import 'package:crm/pages/services/components/service_card.dart';

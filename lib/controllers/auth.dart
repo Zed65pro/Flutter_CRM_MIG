@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:crm/api/api_client.dart';
 import 'package:get/get.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -6,6 +7,7 @@ class AuthController extends GetxController {
   final RxBool _isAuthenticated = false.obs;
   final RxString _token = "".obs;
   final RxMap<dynamic, dynamic> _user = {}.obs;
+  final ApiClient apiClient = Get.find();
 
   // Initialize SharedPreferences instance
   late SharedPreferences _prefs;
@@ -38,6 +40,10 @@ class AuthController extends GetxController {
     final String? userJson = _prefs.getString('user');
     if (userJson != null) {
       user = json.decode(userJson);
+    }
+
+    if (token.isNotEmpty) {
+      apiClient.setToken(token);
     }
   }
 

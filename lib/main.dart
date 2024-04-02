@@ -1,4 +1,5 @@
 // main.dart
+import 'package:crm/api/api_client.dart';
 import 'package:crm/controllers/auth.dart';
 import 'package:crm/controllers/location.dart';
 import 'package:crm/routes.dart';
@@ -22,15 +23,14 @@ class MyApp extends StatelessWidget {
       title: 'CRM',
       debugShowCheckedModeBanner: false,
       theme: myTheme,
-      initialRoute:
-          RoutesUrls.splashScreen, // Set the initial route to the LoginPage
+      initialRoute: RoutesUrls.splashScreen,
       getPages: AppRoutes.routes,
       initialBinding: BindingsBuilder(() {
+        Get.put(ApiClient());
         Get.put(
           AuthController(),
         );
         Get.put(LocationController());
-        // Get.lazyPut(() => LocationController());
       }),
     );
   }

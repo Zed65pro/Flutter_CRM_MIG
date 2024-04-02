@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:camerawesome/camerawesome_plugin.dart';
 import 'package:crm/controllers/auth.dart';
-import 'package:crm/controllers/job_photo.dart';
+import 'package:crm/controllers/job_order.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:path_provider/path_provider.dart';
@@ -17,7 +17,7 @@ class _JobDetailsCameraState extends State<JobDetailsCamera> {
   final AuthController authController = Get.find();
   bool isOverlayVisible = false;
   String? overlayPhotoPath;
-  final JobPhotoController jobPhotoController = Get.find();
+  final JobOrderController jobOrderController = Get.find();
 
   @override
   void initState() {
@@ -88,7 +88,7 @@ class _JobDetailsCameraState extends State<JobDetailsCamera> {
         PhotoOverlay(
             photoPath: overlayPhotoPath!,
             onConfirm: () async {
-              await jobPhotoController.addPhoto(
+              await jobOrderController.addPhoto(
                   overlayPhotoPath!, jobId, authController.token);
               Get.back();
             },
